@@ -1,0 +1,37 @@
+cmake_minimum_required(VERSION 3.26)
+project(AoC)
+
+set(CMAKE_CXX_STANDARD 20)
+
+add_library(aoc_lib OBJECT
+        source/aoc.cpp
+
+        source/2020/01/solver.cpp
+        source/2023/01/solver.cpp
+)
+
+target_include_directories(aoc_lib PUBLIC
+        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/source>"
+)
+
+add_subdirectory(libs/abseil-cpp)
+add_compile_definitions(FMT_EXCEPTIONS=0)
+add_subdirectory(libs/fmt)
+add_subdirectory(libs/scnlib)
+set(CPP-LAZY_USE_STANDALONE TRUE)
+add_subdirectory(libs/cpp-lazy)
+add_subdirectory(libs/eigen)
+
+target_link_libraries(aoc_lib PUBLIC
+        absl::strings
+        fmt::fmt
+        scn::scn
+        cpp-lazy::cpp-lazy
+        Eigen3::Eigen
+)
+
+add_executable(AoC
+        source/main.cpp
+        source/aoc.hpp
+)
+target_link_libraries(AoC PRIVATE aoc_lib)
