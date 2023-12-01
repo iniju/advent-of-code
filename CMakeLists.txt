@@ -23,6 +23,8 @@ add_subdirectory(libs/cpp-lazy)
 add_subdirectory(libs/eigen)
 
 target_link_libraries(aoc_lib PUBLIC
+        absl::flat_hash_map
+        absl::flat_hash_set
         absl::strings
         fmt::fmt
         scn::scn

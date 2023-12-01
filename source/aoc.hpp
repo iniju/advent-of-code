@@ -150,8 +150,9 @@ auto result(T1 t1, T2 t2) -> std::tuple<std::string, std::string> {
 }
 
 namespace util {
-inline auto GetInput(int year, int day) {
-  std::string path = fmt::format("./source/{}/{:02}/input.txt", year, day);
+inline auto GetInput(int year, int day, bool example = false, int example_index = 1) {
+  std::string path =
+      fmt::format("./source/{}/{:02}/{}.txt", year, day, example ? fmt::format("example{}", example_index) : "input");
   std::ifstream f(path);
   if (f.is_open()) {
     std::stringstream ss;
