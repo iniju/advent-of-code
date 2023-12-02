@@ -23,10 +23,11 @@
 #include <vector>
 
 #include <absl/algorithm/container.h>
+#include <absl/log/check.h>
 #include <absl/strings/str_split.h>
 #include <absl/strings/substitute.h>
 
-#include <Eigen/Core>
+//#include <Eigen/Core>
 
 #include <fmt/color.h>
 #include <fmt/core.h>

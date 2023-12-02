@@ -23,15 +23,13 @@ set(CPP-LAZY_USE_STANDALONE TRUE)
 add_subdirectory(libs/cpp-lazy)
 add_subdirectory(libs/eigen)
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
-#set(CMAKE_PREFIX_PATH "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/libs")
-# re2 hack
+# re2 cmake instructions are in libs/CMakeLists.txt
 add_subdirectory(libs)
 
 target_link_libraries(aoc_lib PUBLIC
-        absl::base
-        absl::core_headers
         absl::flat_hash_map
         absl::flat_hash_set
+        absl::log
         absl::strings
         fmt::fmt
         scn::scn

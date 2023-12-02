@@ -1,8 +1,12 @@
 #include <aoc.hpp>
-#include <absl/container/flat_hash_map.h>
+
 #include <ostream>
+#include <absl/container/flat_hash_map.h>
+#include <re2/re2.h>
 
 namespace {
+RE2 CubeCountPattern = ("(\\d+) (red|green|blue)(?:, )?");
+
 enum CubeColor {
   ERROR,
   RED,
@@ -47,14 +51,11 @@ auto advent2023::day02() -> result {
     std::vector<absl::string_view> sets_list = absl::StrSplit(sets_part, "; ");
     for (auto set_str : sets_list) {
       CubeSet cube_set;
-      std::vector<absl::string_view> counts_list = absl::StrSplit(set_str, ", ");
-      for (auto count_str : counts_list) {
-        CubeCount cube_count{};
-        std::string color;
-        auto red_count = scn::scan(count_str, "{}{}", cube_count.count, color);
-        cube_count.color = parseColor(color);
-        assert(color != CubeColor.ERROR);
-        cube_set.push_back(cube_count);
+      int count;
+      std::string color;
+      absl::string_view ss(set_str);
+      while (RE2::Consume(&ss, CubeCountPattern, &count, &color)) {
+        cube_set.push_back({count, parseColor(color)});
       }
       game.sets.push_back(cube_set);
     }
@@ -67,6 +68,11 @@ auto advent2023::day02() -> result {
       {RED, 12}, {GREEN, 13}, {BLUE, 14}
   };
   for (const auto &game : games) {
+//    fmt::print("Game {}: {}", game.id, absl::StrJoin(game.sets, "; ", [](std::string* out1, const auto& s) {
+//      out1->append(absl::StrJoin(s, ", ", [](std::string* out2, const auto& c) {
+//        out2->append(fmt::format("{} {}", c.count, (int)c.color));
+//      }));
+//    }));
     bool invalid = false;
     for (const auto &cube_set : game.sets) {
       for (const auto &cube_count : cube_set) {
