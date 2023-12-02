@@ -55,7 +55,6 @@ struct advent {
   using result = std::tuple<std::string, std::string>;
 
   auto operator()(int day) const -> result {
-    assert(day >= 1 && day <= 25);
     return days[day - 1]();
   }
 
@@ -110,10 +109,10 @@ struct advent {
   static auto day25() -> result;
 
  private:
-  static constexpr std::array<result (*)(), 1> days = {
+  static constexpr std::array<result (*)(), 2> days = {
       // NOLINT
       &advent<year>::day01,
-      // &advent<year>::day02,
+      &advent<year>::day02,
       // &advent<year>::day03,
       // &advent<year>::day04,
       // &advent<year>::day05,

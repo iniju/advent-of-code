@@ -46,7 +46,7 @@ int findDigits(absl::string_view input, const std::vector<absl::string_view> &ke
 }  // namespace detail
 
 template<>
-auto advent2023::day01() -> result {
+auto advent<2023>::day01() -> result {
   std::string input = aoc::util::GetInput(year, 1);
   std::vector<absl::string_view> lines = aoc::util::TokenizeInput<absl::string_view>(
       input,

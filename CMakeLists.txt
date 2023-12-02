@@ -8,6 +8,7 @@ add_library(aoc_lib OBJECT
 
         source/2020/01/solver.cpp
         source/2023/01/solver.cpp
+        source/2023/02/solver.cpp
 )
 
 target_include_directories(aoc_lib PUBLIC
