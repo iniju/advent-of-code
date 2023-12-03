@@ -110,11 +110,11 @@ struct advent {
   static auto day25() -> result;
 
  private:
-  static constexpr std::array<result (*)(), 2> days = {
+  static constexpr std::array<result (*)(), 3> days = {
       // NOLINT
       &advent<year>::day01,
       &advent<year>::day02,
-      // &advent<year>::day03,
+      &advent<year>::day03,
       // &advent<year>::day04,
       // &advent<year>::day05,
       // &advent<year>::day06,
