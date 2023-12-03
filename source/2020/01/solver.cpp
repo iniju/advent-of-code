@@ -20,7 +20,7 @@ auto FindSumGoal(std::vector<u32>::const_iterator begin,
 
 }  // namespace detail
 
-template <>
+template<>
 auto advent2020::day01() -> result {
   std::string input = aoc::util::GetInput(year, 1);
   std::vector<u32> expenses = aoc::util::TokenizeInput<u32>(

@@ -159,8 +159,7 @@ inline auto GetInput(int year, int day, bool example = false, int example_index 
     ss << f.rdbuf();
     return ss.str();
   }
-//  throw std::runtime_error(fmt::format("Could not open path {}\n", path));
-  std::cout << fmt::format("Could not open path {}\n", path) << std::endl;
+  CHECK(false) << fmt::format("Could not open path {}\n", path) << std::endl;
   std::terminate();
 }
 

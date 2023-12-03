@@ -25,7 +25,8 @@ auto is_symbol = [](char ch) {
   return ch != '.' && (ch < '0' || ch > '9');
 };
 
-template<typename InputIt> int ParseNum(InputIt* first, InputIt last) {
+template<typename InputIt>
+int ParseNum(InputIt *first, InputIt last) {
   int num = **first - '0';
   while (++(*first) != last && is_number(**first)) {
     num = num * 10 + (**first - '0');
@@ -55,15 +56,15 @@ auto advent2023::day03() -> result {
         // Found symbol
         char symbol = *it;
         // fmt::print("{} @ {},{}\n", *it, line_index, it - line.begin());
-        symbols[line_index][(int)(it - line.begin())] = symbol;
+        symbols[line_index][(int) (it - line.begin())] = symbol;
         // Store the gears also by coordinates.
-        if (symbol == '*') gears[{line_index, (int)(it - line.begin())}] = {};
+        if (symbol == '*') gears[{line_index, (int) (it - line.begin())}] = {};
       } else {
         // Found start of number, retrieve whole number.
         Number number{};
-        number.start = (int)(it - line.begin());
+        number.start = (int) (it - line.begin());
         number.num = ParseNum(&it, line.end());
-        number.end = (int)(it - line.begin());
+        number.end = (int) (it - line.begin());
         //  fmt::print("{} @ {},[{}..{}]\n", number.num, line_index, number.start, number.end);
         numbers[line_index].push_back(number);
       }
@@ -74,8 +75,8 @@ auto advent2023::day03() -> result {
 
   // Part 1 & Part 2
   u64 part1 = 0;
-  for (const auto& [line, numbers_in_line] : numbers) {
-    for (const auto& num : numbers_in_line) {
+  for (const auto &[line, numbers_in_line] : numbers) {
+    for (const auto &num : numbers_in_line) {
       bool is_part = false;
       for (int y = line - 1; y <= line + 1; y++) {
         for (int x = num.start - 1; x <= num.end + 1; x++) {
@@ -99,7 +100,7 @@ auto advent2023::day03() -> result {
 
   // Part 2
   u64 part2 = 0;
-  for (const auto& [xy, num_adjacent_to_gear] : gears) {
+  for (const auto &[xy, num_adjacent_to_gear] : gears) {
     if (num_adjacent_to_gear.size() == 2) {
       part2 += num_adjacent_to_gear.at(0) * num_adjacent_to_gear.at(1);
     }
