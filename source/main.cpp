@@ -4,7 +4,7 @@
 auto main() -> int {
   constexpr int year{2023};
 
-  for (int day = 1; day <= 3; day++) {
+  for (int day = 1; day <= 4; day++) {
     auto start = std::chrono::high_resolution_clock::now();
     auto result = advent<year>{}(day);
     auto end = std::chrono::high_resolution_clock::now();
