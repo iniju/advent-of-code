@@ -11,6 +11,7 @@ add_library(aoc_lib OBJECT
         source/2023/02/solver.cpp
         source/2023/03/solver.cpp
         source/2023/04/solver.cpp
+        source/2023/05/solver-2023-05.cpp
 )
 
 target_include_directories(aoc_lib PUBLIC
@@ -29,6 +30,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 add_subdirectory(libs)
 
 target_link_libraries(aoc_lib PUBLIC
+        absl::btree
         absl::flat_hash_map
         absl::flat_hash_set
         absl::log

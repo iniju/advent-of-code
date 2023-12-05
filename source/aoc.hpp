@@ -110,13 +110,14 @@ struct advent {
   static auto day25() -> result;
 
  private:
-  static constexpr std::array<result (*)(), 4> days = {
+  static constexpr std::array<result (*)(), 6> days = {
       // NOLINT
       &advent<year>::day01,
       &advent<year>::day02,
       &advent<year>::day03,
       &advent<year>::day04,
-//      &advent<year>::day05,
+      &advent<year>::day05,
+      nullptr,
 //      &advent<year>::day06,
 //      &advent<year>::day07,
 //      &advent<year>::day08,
@@ -170,7 +171,6 @@ std::vector<T> TokenizeInput(absl::string_view input,
   std::vector<absl::string_view> tokens =
       absl::StrSplit(input, separator, absl::SkipWhitespace());
   auto result = lz::map(tokens, transform).toVector();
-  // absl::c_transform(tokens, result.begin(), parser);
   return result;
 }
 
