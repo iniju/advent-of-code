@@ -50,8 +50,6 @@ struct Range {
     return os << "[" << r.start << ", " << r.end << "]";
   }
 };
-template<>
-struct fmt::formatter<Range> : ostream_formatter {};
 
 // Comparator for RangeSet. Since ranges don't overlap, we just need to compare the start number to sort them.
 struct RangeLess {
@@ -176,6 +174,13 @@ RangeSet GetLocationForSeedRange(const Range &seedRange) {
 }
 
 }  // namespace
+
+namespace fmt {
+
+template<>
+struct fmt::formatter<Range> : ostream_formatter {};
+
+}
 
 template<>
 auto advent2023::day05() -> result {
