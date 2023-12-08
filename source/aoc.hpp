@@ -110,7 +110,7 @@ struct advent {
   static auto day25() -> result;
 
  private:
-  static constexpr std::array<result (*)(), 6> days = {
+  static constexpr std::array<result (*)(), 8> days = {
       // NOLINT
       &advent<year>::day01,
       &advent<year>::day02,
@@ -118,8 +118,8 @@ struct advent {
       &advent<year>::day04,
       &advent<year>::day05,
       &advent<year>::day06,
-//      &advent<year>::day07,
-//      &advent<year>::day08,
+      &advent<year>::day07,
+      &advent<year>::day08,
 //      &advent<year>::day09,
 //      &advent<year>::day10,
 //      &advent<year>::day11,
@@ -171,6 +171,35 @@ std::vector<T> TokenizeInput(absl::string_view input,
       absl::StrSplit(input, separator, absl::SkipWhitespace());
   auto result = lz::map(tokens, transform).toVector();
   return result;
+}
+
+template<typename UType>
+std::vector<UType> PrimeSieve(UType limit) {
+  if (limit < 2U) {
+    // No primes less than 2
+    return std::vector<UType>();
+  }
+  // An array of bools where sieve[i] is false if i is prime
+  std::vector<bool> sieve(limit, false);
+
+  // 0 and 1 are not prime.
+  sieve[0] = true;
+  sieve[1] = true;
+
+  std::vector<UType> primes;
+  for (UType loop = 0; loop < limit; ++loop) {
+    if (!sieve[loop]) {
+      // loop is prime
+      primes.push_back(loop);
+
+      // Mark i*i..limit in sieve as not prime,
+      // as they are a multiple of i
+      for (UType j = loop * loop; j < limit; j += loop) {
+        sieve[j] = true;
+      }
+    }
+  }
+  return primes;
 }
 
 }  // util
