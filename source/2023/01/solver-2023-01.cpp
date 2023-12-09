@@ -2,6 +2,7 @@
 #include <absl/container/flat_hash_map.h>
 
 namespace {
+
 absl::flat_hash_map<absl::string_view, int> word_value = {
     {"0", 0}, {"zero", 0},
     {"1", 1}, {"one", 1},
@@ -43,11 +44,11 @@ int findDigits(absl::string_view input, const std::vector<absl::string_view> &ke
   return 10 * first + last;
 }
 
-}  // namespace detail
+}  // namespace
 
 template<>
-auto advent<2023>::day01() -> result {
-  std::string input = aoc::util::GetInput(year, 1);
+auto advent<2023, 1>::solve() -> Result {
+  std::string input = GetInput();
   std::vector<absl::string_view> lines = aoc::util::TokenizeInput<absl::string_view>(
       input,
       [](absl::string_view line) { return line; });

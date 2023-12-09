@@ -6,6 +6,7 @@
 #pragma STDC FENV_ACCESS ON
 
 namespace {
+
 RE2 SpacesPattern = ("\\s+");
 
 std::vector<u16> ParsePart1Line(absl::string_view line) {
@@ -48,8 +49,8 @@ std::pair<u64, u64> CalculateWinningLimits(u64 time, u64 distance) {
 }  // namespace
 
 template<>
-auto advent2023::day06() -> result {
-  std::string input = aoc::util::GetInput(year, 6);
+auto advent<2023, 6>::solve() -> Result {
+  std::string input = GetInput();
   std::vector<absl::string_view> lines = absl::StrSplit(input, "\n", absl::SkipWhitespace());
 
   // Part 1

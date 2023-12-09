@@ -1,6 +1,6 @@
 #include <aoc.hpp>
 
-namespace detail {
+namespace {
 
 auto FindSumGoal(std::vector<u32>::const_iterator begin,
                  std::vector<u32>::const_iterator end, u32 goal)
@@ -18,22 +18,22 @@ auto FindSumGoal(std::vector<u32>::const_iterator begin,
   return std::nullopt;
 }
 
-}  // namespace detail
+}  // namespace
 
 template<>
-auto advent2020::day01() -> result {
-  std::string input = aoc::util::GetInput(year, 1);
+auto advent<2020, 1>::solve() -> Result {
+  std::string input = GetInput();
   std::vector<u32> expenses = aoc::util::TokenizeInput<u32>(
       input,
       [](absl::string_view s) { return scn::scan_value<u32>(s).value(); });
   absl::c_sort(expenses);
 
   auto p1 =
-      detail::FindSumGoal(expenses.cbegin(), expenses.cend(), 2020).value();
+      FindSumGoal(expenses.cbegin(), expenses.cend(), 2020).value();
   u32 p2 = 0;
   for (auto i = expenses.cbegin(); i != expenses.cend() - 2; i++) {
     u32 target = 2020 - *i;
-    auto answer = detail::FindSumGoal(i + 1, expenses.cend(), target);
+    auto answer = FindSumGoal(i + 1, expenses.cend(), target);
     if (answer.has_value()) {
       p2 = *i * answer.value();
       break;

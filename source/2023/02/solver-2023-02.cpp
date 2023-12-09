@@ -5,6 +5,7 @@
 #include <re2/re2.h>
 
 namespace {
+
 RE2 CubeCountPattern = ("(\\d+) (red|green|blue)(?:, )?");
 
 enum CubeColor {
@@ -33,11 +34,11 @@ struct Game {
   std::vector<CubeSet> sets;
 };
 
-}  // namespace detail
+}  // namespace
 
 template<>
-auto advent2023::day02() -> result {
-  std::string input = aoc::util::GetInput(year, 2);
+auto advent<2023, 2>::solve() -> Result {
+  std::string input = GetInput();
   std::vector<absl::string_view> lines = aoc::util::TokenizeInput<absl::string_view>(
       input,
       [](absl::string_view line) { return line; });

@@ -35,11 +35,11 @@ int ParseNum(InputIt *first, InputIt last) {
   return num;
 }
 
-}  // namespace detail
+}  // namespace
 
 template<>
-auto advent2023::day03() -> result {
-  std::string input = aoc::util::GetInput(year, 3);
+auto advent<2023, 3>::solve() -> Result {
+  std::string input = GetInput();
   std::vector<absl::string_view> lines = aoc::util::TokenizeInput<absl::string_view>(
       input,
       [](absl::string_view line) { return line; });

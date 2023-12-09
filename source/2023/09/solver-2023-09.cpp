@@ -22,8 +22,8 @@ History GetNextSequence(const History &sequence) {
 }  // namespace
 
 template<>
-auto advent2023::day09() -> result {
-  std::string input = aoc::util::GetInput(year, 9, false);
+auto advent<2023, 9>::solve() -> Result {
+  std::string input = GetInput();
   std::vector<absl::string_view> lines = absl::StrSplit(input, "\n", absl::SkipWhitespace());
   std::vector<History> histories{};
   absl::c_for_each(lines, [&histories](absl::string_view line) {
@@ -42,7 +42,7 @@ auto advent2023::day09() -> result {
 
     // Part 1 & 2
     sequences.back().push_back(0);
-    for (int i = sequences.size() - 2; i >= 0; i--) {
+    for (u64 i = sequences.size() - 2; i >= 0; i--) {
       sequences[i].emplace_back(sequences[i].back() + sequences[i + 1].back());
       sequences[i].emplace_front(sequences[i].front() - sequences[i + 1].front());
     }

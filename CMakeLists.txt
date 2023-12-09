@@ -6,13 +6,13 @@ set(CMAKE_CXX_STANDARD 20)
 add_library(aoc_lib OBJECT
         source/aoc.cpp
 
-        source/2020/01/solver.cpp
-        source/2023/01/solver.cpp
-        source/2023/02/solver.cpp
-        source/2023/03/solver.cpp
-        source/2023/04/solver.cpp
+        source/2020/01/solver-2020-01.cpp
+        source/2023/01/solver-2023-01.cpp
+        source/2023/02/solver-2023-02.cpp
+        source/2023/03/solver-2023-03.cpp
+        source/2023/04/solver-2023-04.cpp
         source/2023/05/solver-2023-05.cpp
-        source/2023/06/solver.cpp
+        source/2023/06/solver-2023-06.cpp
         source/2023/07/solver-2023-07.cpp
         source/2023/08/solver-2023-08.cpp
         source/2023/09/solver-2023-09.cpp

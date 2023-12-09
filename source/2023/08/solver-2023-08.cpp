@@ -8,6 +8,7 @@
 #include <re2/re2.h>
 
 namespace {
+
 RE2 NodePattern(R"((...) = \((...), (...)\))");
 enum Move {
   LEFT,
@@ -61,11 +62,11 @@ namespace fmt {
 template<>
 struct fmt::formatter<Instruction> : ostream_formatter {};
 
-}  // fmt
+}  // namespace fmt
 
 template<>
-auto advent2023::day08() -> result {
-  std::string input = aoc::util::GetInput(year, 8, false, 3);
+auto advent<2023, 8>::solve() -> Result {
+  std::string input = GetInput();
   std::vector<absl::string_view> lines = absl::StrSplit(input, "\n", absl::SkipWhitespace());
   std::vector<Move> moves{};
   absl::c_transform(lines.at(0), std::back_inserter(moves), [](char c) { return c == 'L' ? LEFT : RIGHT; });

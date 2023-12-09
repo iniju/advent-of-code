@@ -6,6 +6,7 @@
 #include "fmt/ostream.h"
 
 namespace {
+
 using Card = char;
 const absl::btree_map<Card, u8> cardOrdering1{
     {'2', 2}, {'3', 3}, {'4', 4}, {'5', 5},
@@ -37,8 +38,7 @@ struct Hand {
   }
 };
 template<> [[nodiscard]] u8 Hand<1>::CardValue(Card c) const{
-  auto val = cardOrdering1.at(c);
-  return val;
+  return cardOrdering1.at(c);
 }
 template<> [[nodiscard]] u8 Hand<2>::CardValue(Card c) const {
   return cardOrdering2.at(c);
@@ -157,11 +157,11 @@ struct fmt::formatter<Hand<1>> : ostream_formatter {};
 template<>
 struct fmt::formatter<Hand<2>> : ostream_formatter {};
 
-}  // fmt
+}  // namespace fmt
 
 template<>
-auto advent2023::day07() -> result {
-  std::string input = aoc::util::GetInput(year, 7, false);
+auto advent<2023, 7>::solve() -> Result {
+  std::string input = GetInput();
   std::vector<absl::string_view> lines = absl::StrSplit(input, "\n", absl::SkipWhitespace());
   std::vector<HandBid<1>> handBids = aoc::util::TokenizeInput<HandBid<1>>(input, [](absl::string_view line) {
     HandBid<1> handBid{};

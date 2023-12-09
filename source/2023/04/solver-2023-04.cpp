@@ -12,7 +12,6 @@ struct Card {
   NumSet winning;
   NumSet have;
 };
-//using Card = std::pair<NumSet, NumSet>;
 
 Card parseCard(absl::string_view line) {
   std::vector<absl::string_view> parts = absl::StrSplit(line, ':', absl::SkipWhitespace());
@@ -35,8 +34,8 @@ Card parseCard(absl::string_view line) {
 }  // namespace
 
 template<>
-auto advent2023::day04() -> result {
-  std::string input = aoc::util::GetInput(year, 4);
+auto advent<2023, 4>::solve() -> Result {
+  std::string input = GetInput();
   std::vector<Card> cards = aoc::util::TokenizeInput<Card>(
       input,
       [](absl::string_view line) { return parseCard(line); });
