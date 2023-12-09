@@ -83,3 +83,5 @@ fabric.properties
 /libs/fmt
 /libs/re2
 /libs/scnlib
+/source/20*/*/input.txt
+/source/20*/*/example[1-9].txt
