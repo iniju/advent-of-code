@@ -42,7 +42,7 @@ auto advent<2023, 9>::solve() -> Result {
 
     // Part 1 & 2
     sequences.back().push_back(0);
-    for (u64 i = sequences.size() - 2; i >= 0; i--) {
+    for (i64 i = sequences.size() - 2; i >= 0; i--) {
       sequences[i].emplace_back(sequences[i].back() + sequences[i + 1].back());
       sequences[i].emplace_front(sequences[i].front() - sequences[i + 1].front());
     }

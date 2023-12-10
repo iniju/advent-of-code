@@ -85,3 +85,4 @@ fabric.properties
 /libs/scnlib
 /source/20*/*/input.txt
 /source/20*/*/example[1-9].txt
+/AoC.exe
