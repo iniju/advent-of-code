@@ -116,10 +116,10 @@ RangeSet SplitRangeSet(const Range &range, const Mapping &mapping) {
   ends.insert(range.start);
   ends.insert(range.end);
   RangeSet splitBySet{};
-  for (const auto& [mapFrom, _] : mapping) {
+  for (const auto &[mapFrom, _] : mapping) {
     splitBySet.insert(mapFrom);
   }
-  for (const auto& splitBy : splitBySet) {
+  for (const auto &splitBy : splitBySet) {
     ends.insert(splitBy.start);
     ends.insert(splitBy.end);
   }
@@ -183,7 +183,7 @@ struct fmt::formatter<Range> : ostream_formatter {};
 }  // namespace fmt
 
 template<>
-auto advent<2023,5>::solve() -> Result {
+auto advent<2023, 5>::solve() -> Result {
   std::string input = GetInput();
   std::vector<absl::string_view> lines = absl::StrSplit(input, "\n", absl::SkipWhitespace());
   std::vector<u64> seeds = ParseSeeds(lines.at(0));

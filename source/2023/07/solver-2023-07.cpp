@@ -24,10 +24,10 @@ template<int>
 struct Hand {
   absl::string_view val;
   friend std::ostream &operator<<(std::ostream &os, const Hand &t) {
-   return os << t.val;
+    return os << t.val;
   }
   [[nodiscard]] u8 CardValue(Card c) const;
-  bool operator<(const Hand& right) const {
+  bool operator<(const Hand &right) const {
     for (int i = 0; i <= 4; i++) {
       if (val.at(i) == right.val.at(i)) continue;
       u8 val1 = CardValue(val.at(i));
@@ -37,10 +37,12 @@ struct Hand {
     return false;
   }
 };
-template<> [[nodiscard]] u8 Hand<1>::CardValue(Card c) const{
+template<>
+[[nodiscard]] u8 Hand<1>::CardValue(Card c) const {
   return cardOrdering1.at(c);
 }
-template<> [[nodiscard]] u8 Hand<2>::CardValue(Card c) const {
+template<>
+[[nodiscard]] u8 Hand<2>::CardValue(Card c) const {
   return cardOrdering2.at(c);
 }
 enum TypeEnum {
@@ -75,7 +77,7 @@ struct Type {
       case HIGH_CARD: return os << "HIGH CARD";
     }
   }
-  bool operator<(const Type& right) const {
+  bool operator<(const Type &right) const {
     return typeOrdering.at(val) < typeOrdering.at(right.val);
   }
 };
@@ -83,7 +85,7 @@ template<int Part>
 struct HandType {
   Type type;
   Hand<Part> hand;
-  bool operator<(const HandType& right) const {
+  bool operator<(const HandType &right) const {
     if (type.val == right.type.val) return hand < right.hand;
     return type < right.type;
   }
@@ -92,7 +94,7 @@ template<int Part>
 struct HandBid {
   HandType<Part> handType;
   u64 bid;
-  bool operator<(const HandBid& right) const {
+  bool operator<(const HandBid &right) const {
     return handType < right.handType;
   }
 };
@@ -138,11 +140,9 @@ TypeEnum GetType2(absl::string_view hand) {
         case TWO_PAIR: return FOUR_OF_A_KIND;
         default: return FIVE_OF_A_KIND;
       }
-    case 3:
-      if (type1 == THREE_OF_A_KIND) return FOUR_OF_A_KIND;
+    case 3:if (type1 == THREE_OF_A_KIND) return FOUR_OF_A_KIND;
       return FIVE_OF_A_KIND;
-    default:
-      return FIVE_OF_A_KIND;
+    default:return FIVE_OF_A_KIND;
   }
 }
 
@@ -153,7 +153,8 @@ namespace fmt {
 template<>
 struct fmt::formatter<Type> : ostream_formatter {};
 template<>
-struct fmt::formatter<Hand<1>> : ostream_formatter {};
+struct fmt::formatter<Hand < 1>> : ostream_formatter {
+};
 template<>
 struct fmt::formatter<Hand<2>> : ostream_formatter {};
 
@@ -174,11 +175,11 @@ auto advent<2023, 7>::solve() -> Result {
   // Part 1
   u64 part1 = 0;
   absl::btree_map<HandType<1>, u64> sortedHandBids1{};
-  for (const auto& handBid : handBids) {
+  for (const auto &handBid : handBids) {
     sortedHandBids1[handBid.handType] = handBid.bid;
   }
   u64 rank = 1;
-  for (const auto& [handType, bid] : sortedHandBids1) {
+  for (const auto &[handType, bid] : sortedHandBids1) {
     part1 += rank++ * bid;
   }
 
@@ -186,14 +187,14 @@ auto advent<2023, 7>::solve() -> Result {
   u64 part2 = 0;
   std::vector<HandBid<2>> handBids2{};
   absl::btree_map<HandType<2>, u64> sortedHandBids2{};
-  for (const auto& handBid1 : handBids) {
+  for (const auto &handBid1 : handBids) {
     HandType<2> handType2{};
     handType2.hand.val = handBid1.handType.hand.val;
     handType2.type.val = GetType2(handBid1.handType.hand.val);
     sortedHandBids2[handType2] = handBid1.bid;
   }
   rank = 1;
-  for (const auto& [handType, bid] : sortedHandBids2) {
+  for (const auto &[handType, bid] : sortedHandBids2) {
     part2 += rank++ * bid;
   }
   return aoc::result(part1, part2);

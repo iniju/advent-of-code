@@ -18,19 +18,6 @@ const Pipe SW = '7';   // '\xBF';   // ┐
 const Pipe NW = 'J';   // '\xD9';   // ┘
 const Pipe NE = 'L';   // '\xC0';   // └
 const Pipe SE = 'F';   // '\xDA';   // ┌
-char toPipe(char c) {
-  switch (c) {
-    case '.': return NONE;
-    case 'S': return STRT;
-    case '|': return VER;
-    case '-': return HOR;
-    case '7': return SW;
-    case 'J': return NW;
-    case 'L': return NE;
-    case 'F': return SE;
-    default: CHECK(false);
-  }
-}
 using Map = std::vector<std::vector<Pipe>>;
 absl::flat_hash_map<Dir, Dir> opposite{
     {N, S},
@@ -168,7 +155,7 @@ namespace fmt {
 
 template<>
 struct fmt::formatter<Map> : formatter<string_view> {
-  auto format(const Map &m, format_context &ctx) const {
+  static auto format(const Map &m, format_context &ctx) {
     std::vector<std::string> rows;
     absl::c_transform(m, std::back_inserter(rows), [](std::vector<Pipe> row) {
       return fmt::format("{}", string_view{row.data(), row.size()});
