@@ -20,6 +20,7 @@ add_library(aoc_lib OBJECT
         source/2023/11/solver-2023-11.cpp
         source/2023/12/solver-2023-12.cpp
         source/2023/13/solver-2023-13.cpp
+        source/2023/14/solver-2023-14.cpp
 )
 
 target_include_directories(aoc_lib PUBLIC
@@ -41,6 +42,7 @@ target_link_libraries(aoc_lib PUBLIC
         absl::btree
         absl::flat_hash_map
         absl::flat_hash_set
+        absl::hash
         absl::log
         absl::strings
         fmt::fmt

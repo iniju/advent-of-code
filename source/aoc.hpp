@@ -24,10 +24,11 @@
 
 #include <absl/algorithm/container.h>
 #include <absl/log/check.h>
+#include <absl/hash/hash.h>
 #include <absl/strings/str_split.h>
 #include <absl/strings/substitute.h>
 
-//#include <Eigen/Core>
+#include <Eigen/Core>
 
 #include <fmt/color.h>
 #include <fmt/core.h>
@@ -133,8 +134,42 @@ std::vector<UType> PrimeSieve(UType limit) {
   return primes;
 }
 
+struct EigenMatrixHashWrapper {
+  Eigen::MatrixXi m;
+};
+
+template<typename H>
+H AbslHashValue(H h, const EigenMatrixHashWrapper &m) {
+  H state = H::combine(std::move(h), m.m.rows(), m.m.cols());
+  for (i32 i = 0; i < m.m.rows(); i++) {
+    for (i32 j = 0; j < m.m.cols(); j++) {
+      state = H::combine(std::move(state), m.m(i, j));
+    }
+  }
+  return state;
+}
+using EigenMatrixHasher = absl::Hash<EigenMatrixHashWrapper>;
+
 }  // util
 
 }  // namespace aoc
+
+
+//namespace std {
+//
+//template<typename Scalar, int Rows, int Cols>
+//struct hash<Eigen::Matrix<Scalar, Rows, Cols>> {
+  // https://wjngkoh.wordpress.com/2015/03/04/c-hash-function-for-eigen-matrix-and-vector/
+//  size_t operator()(const Eigen::Matrix<Scalar, Rows, Cols> &matrix) const {
+//    size_t seed = 0;
+//    for (size_t i = 0; i < matrix.size(); ++i) {
+//      Scalar elem = *(matrix.data() + i);
+//      seed ^= std::hash<Scalar>()(elem) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+//    }
+//    return seed;
+//  }
+//};
+//
+//}  // namespace std
 
 #endif //ADVENTOFCODE_AOC_HPP
