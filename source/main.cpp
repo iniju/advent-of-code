@@ -19,6 +19,7 @@ auto main() -> int {
   advent<YEAR, 13>::print();
   advent<YEAR, 14>::print();
   advent<YEAR, 15>::print();
+  advent<YEAR, 16>::print();
 
   return 0;
 }

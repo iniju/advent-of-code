@@ -88,10 +88,13 @@ struct advent {
 };
 
 namespace aoc {
+
 template<typename T1, typename T2>
 auto result(T1 t1, T2 t2) -> std::tuple<std::string, std::string> {
   return std::tuple{fmt::format("{}", t1), fmt::format("{}", t2)};
 }
+
+template <typename E> auto ToUnderlying(E e) { return static_cast<std::underlying_type_t<E>>(e); }
 
 namespace util {
 
