@@ -7,40 +7,14 @@
 #include <fmt/ostream.h>
 
 namespace {
-enum class Dir : char {
-  N = '^',
-  E = '>',
-  S = 'v',
-  W = '<',
-};
-std::array<Dir, 4> all_dirs{Dir::N, Dir::E, Dir::S, Dir::W};
-std::tuple<i32, i32> MoveDir(Dir dir) {
-  static const std::array<std::tuple<i32, i32>, 4> moves{{
-                                                             {-1, 0}, {0, 1}, {1, 0}, {0, -1}
-                                                         }};
-  switch (dir) {
-    case Dir::N: return moves[0];
-    case Dir::E: return moves[1];
-    case Dir::S: return moves[2];
-    case Dir::W: return moves[3];
-  }
 
-}
-Dir OppositeDir(Dir dir) {
-  switch (dir) {
-    case Dir::N: return Dir::S;
-    case Dir::E: return Dir::W;
-    case Dir::S: return Dir::N;
-    case Dir::W: return Dir::E;
-  }
-}
 using Map = Eigen::MatrixXi;
 //Eigen::IOFormat MapFormat(Eigen::StreamPrecision, 0, "", "\n");
 struct Node {
   i32 i;
   i32 j;
   u64 heat_loss;
-  Dir last_dir;
+  aoc::Dir last_dir;
   i32 dir_length;
   bool operator>(const Node &r) const {
     return heat_loss > r.heat_loss;
@@ -49,15 +23,15 @@ struct Node {
     return i == r.i && j == r.j && heat_loss == r.heat_loss && last_dir == r.last_dir && dir_length == r.dir_length;
   }
 };
-using VisitedNode = std::tuple<i32, i32, Dir, i32>;
+using VisitedNode = std::tuple<i32, i32, aoc::Dir, i32>;
 template<typename H>
 H AbslHashValue(H h, const Node &n) {
   return H::combine(std::move(h), n.i, n.j, n.heat_loss, n.last_dir, n.dir_length);
 }
-i32 MoveConstraint1(const Node &node, Dir dir) {
+i32 MoveConstraint1(const Node &node, aoc::Dir dir) {
   return node.last_dir != dir || node.dir_length < 3;
 }
-i32 MoveConstraint2(const Node &node, Dir dir) {
+i32 MoveConstraint2(const Node &node, aoc::Dir dir) {
   if (node.dir_length == 0) {
     return 4;
   }
@@ -69,13 +43,13 @@ i32 MoveConstraint2(const Node &node, Dir dir) {
   }
   return 0;
 }
-u64 FindBestPath(const Map &map, std::function<i32(const Node &, Dir)> constraint) {
+u64 FindBestPath(const Map &map, std::function<i32(const Node &, aoc::Dir)> constraint) {
   u32 height = map.rows();
   u32 width = map.cols();
   u32 goal_i = height - 1;
   u32 goal_j = width - 1;
   std::priority_queue<Node, std::vector<Node>, std::greater<>> pq;
-  pq.push({0, 0, 0, Dir::S, 0});
+  pq.push({0, 0, 0, aoc::Dir::S, 0});
   absl::flat_hash_set<VisitedNode> visited{};
 
   while (!pq.empty()) {
@@ -90,7 +64,7 @@ u64 FindBestPath(const Map &map, std::function<i32(const Node &, Dir)> constrain
       continue;
     }
     visited.insert(visited_node);
-    for (auto d : all_dirs) {
+    for (auto d : aoc::kAllDirs) {
       if (d == OppositeDir(cur.last_dir)) {
         // Can't go backwards.
         continue;

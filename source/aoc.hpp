@@ -23,6 +23,7 @@
 #include <vector>
 
 #include <absl/algorithm/container.h>
+#include <absl/container/flat_hash_map.h>
 #include <absl/log/check.h>
 #include <absl/hash/hash.h>
 #include <absl/strings/str_split.h>
@@ -89,12 +90,68 @@ struct advent {
 
 namespace aoc {
 
+struct Pos {
+  i32 i;
+  i32 j;
+  inline Pos(i32 _i, i32 _j) : i(_i), j(_j) {}
+  inline bool operator==(const Pos &r) const { return i == r.i && j == r.j; }
+  inline Pos operator+(const Pos &r) const { return {i + r.i, j + r.j}; }
+//  Pos operator+=(const Pos& r) { i += r.i; j += r.j; }
+  inline Pos operator*(i32 x) const { return {i * x, j * x}; }
+  template<typename H>
+  H AbslHashValue(H h, const Pos &p) {
+    return H::combine(std::move(h), p.i, p.j);
+  }
+};
+enum class Dir : char {
+  N = '^',
+  E = '>',
+  S = 'v',
+  W = '<',
+};
+static constexpr std::array<Dir, 4> kAllDirs{Dir::N, Dir::E, Dir::S, Dir::W};
+
+inline Pos MoveDir(Dir dir) {
+  static std::array<Pos, 4> kDirMoves{{{-1, 0}, {0, 1}, {1, 0}, {0, -1}}};
+  switch (dir) {
+    case Dir::N: return kDirMoves[0];
+    case Dir::E: return kDirMoves[1];
+    case Dir::S: return kDirMoves[2];
+    case Dir::W: return kDirMoves[3];
+  }
+}
+inline Dir OppositeDir(Dir dir) {
+  switch (dir) {
+    case Dir::N: return Dir::S;
+    case Dir::E: return Dir::W;
+    case Dir::S: return Dir::N;
+    case Dir::W: return Dir::E;
+  }
+}
+inline Dir TurnLeft(Dir dir) {
+  switch (dir) {
+    case Dir::N: return Dir::W;
+    case Dir::E: return Dir::N;
+    case Dir::S: return Dir::E;
+    case Dir::W: return Dir::S;
+  }
+}
+inline Dir TurnRight(Dir dir) {
+  switch (dir) {
+    case Dir::N: return Dir::E;
+    case Dir::E: return Dir::S;
+    case Dir::S: return Dir::W;
+    case Dir::W: return Dir::N;
+  }
+}
+
 template<typename T1, typename T2>
 auto result(T1 t1, T2 t2) -> std::tuple<std::string, std::string> {
   return std::tuple{fmt::format("{}", t1), fmt::format("{}", t2)};
 }
 
-template <typename E> auto ToUnderlying(E e) { return static_cast<std::underlying_type_t<E>>(e); }
+template<typename E>
+auto ToUnderlying(E e) { return static_cast<std::underlying_type_t<E>>(e); }
 
 namespace util {
 
@@ -162,7 +219,7 @@ using EigenMatrixHasher = absl::Hash<EigenMatrixHashWrapper>;
 //
 //template<typename Scalar, int Rows, int Cols>
 //struct hash<Eigen::Matrix<Scalar, Rows, Cols>> {
-  // https://wjngkoh.wordpress.com/2015/03/04/c-hash-function-for-eigen-matrix-and-vector/
+// https://wjngkoh.wordpress.com/2015/03/04/c-hash-function-for-eigen-matrix-and-vector/
 //  size_t operator()(const Eigen::Matrix<Scalar, Rows, Cols> &matrix) const {
 //    size_t seed = 0;
 //    for (size_t i = 0; i < matrix.size(); ++i) {
