@@ -91,13 +91,12 @@ struct advent {
 namespace aoc {
 
 struct Pos {
-  i32 i;
-  i32 j;
-  inline Pos(i32 _i, i32 _j) : i(_i), j(_j) {}
+  i64 i;
+  i64 j;
+  inline Pos(i64 _i, i64 _j) : i(_i), j(_j) {}
   inline bool operator==(const Pos &r) const { return i == r.i && j == r.j; }
   inline Pos operator+(const Pos &r) const { return {i + r.i, j + r.j}; }
-//  Pos operator+=(const Pos& r) { i += r.i; j += r.j; }
-  inline Pos operator*(i32 x) const { return {i * x, j * x}; }
+  inline Pos operator*(i64 x) const { return {i * x, j * x}; }
   template<typename H>
   H AbslHashValue(H h, const Pos &p) {
     return H::combine(std::move(h), p.i, p.j);
@@ -231,5 +230,23 @@ using EigenMatrixHasher = absl::Hash<EigenMatrixHashWrapper>;
 //};
 //
 //}  // namespace std
+
+namespace fmt {
+
+template<>
+struct formatter<aoc::Dir> : formatter<char> {
+  auto format(aoc::Dir dir, format_context &ctx) const {
+    return formatter<char>::format(aoc::ToUnderlying(dir), ctx);
+  }
+};
+
+template<>
+struct formatter<aoc::Pos> : formatter<string_view> {
+  inline auto format(const aoc::Pos& p, format_context &ctx) const {
+    return formatter<string_view>::format(fmt::format("[{}, {}]", p.i, p.j), ctx);
+  }
+};
+
+}  // namespace fmt
 
 #endif //ADVENTOFCODE_AOC_HPP

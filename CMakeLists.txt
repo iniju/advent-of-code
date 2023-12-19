@@ -4,7 +4,6 @@ project(AoC)
 set(CMAKE_CXX_STANDARD 20)
 
 add_library(aoc_lib OBJECT
-        source/aoc.cpp
 
         source/2020/01/solver-2020-01.cpp
         source/2023/01/solver-2023-01.cpp
@@ -24,6 +23,8 @@ add_library(aoc_lib OBJECT
         source/2023/15/solver-2023-15.cpp
         source/2023/16/solver-2023-16.cpp
         source/2023/17/solver-2023-17.cpp
+        source/2023/18/solver-2023-18.cpp
+        source/2023/19/solver-2023-19.cpp
 )
 
 target_include_directories(aoc_lib PUBLIC
