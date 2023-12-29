@@ -39,22 +39,6 @@ u64 SolvePart1(Node start, const absl::flat_hash_set<Node> &targets, const Map &
   return result;
 }
 
-absl::flat_hash_map<u64, u64> Factorize(u64 x, const std::vector<u64> &primes) {
-  absl::flat_hash_map<u64, u64> result{};
-  u64 rem{x};
-  int pi = 0;
-  while (rem != 1 && pi < primes.size()) {
-    u64 prime = primes[pi];
-    while (rem % prime == 0) {
-      result[prime]++;
-      rem /= prime;
-    }
-    pi++;
-  }
-  CHECK(rem == 1) << "Need more primes.";
-  return result;
-}
-
 }  // namespace
 
 namespace fmt {
@@ -83,7 +67,6 @@ auto advent<2023, 8>::solve() -> Result {
   u64 part1 = SolvePart1("AAA", {"ZZZ"}, map, moves);
 
   // Part 2
-  u64 part2 = 1;
   absl::flat_hash_set<u64> solutions{part1};
   std::vector<Node> starts;
   absl::flat_hash_set<Node> targets;
@@ -99,20 +82,7 @@ auto advent<2023, 8>::solve() -> Result {
     solutions.insert(solution);
   }
   // Calculate Least Common Multiplier.
-  u64 max_solution = *absl::c_max_element(solutions);
-  std::vector<u64> primes = aoc::util::PrimeSieve(max_solution);
-  absl::flat_hash_map<u64, u64> common_factors{};
-  for (u64 solution : solutions) {
-    auto factors = Factorize(solution, primes);
-    for (auto [prime, power] : factors) {
-      if (common_factors[prime] < power) common_factors[prime] = power;
-    }
-  }
-  for (auto [prime, power] : common_factors) {
-    for (int i = 0; i < power; i++) {
-      part2 *= prime;
-    }
-  }
+  u64 part2 = aoc::util::LCM(solutions);
 
   return aoc::result(part1, part2);
 }

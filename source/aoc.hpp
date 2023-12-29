@@ -24,6 +24,7 @@
 
 #include <absl/algorithm/container.h>
 #include <absl/container/flat_hash_map.h>
+#include <absl/container/flat_hash_set.h>
 #include <absl/log/check.h>
 #include <absl/hash/hash.h>
 #include <absl/strings/str_split.h>
@@ -93,12 +94,19 @@ namespace aoc {
 struct Pos {
   i64 i;
   i64 j;
+  inline Pos() : i(0), j(0) {}
   inline Pos(i64 _i, i64 _j) : i(_i), j(_j) {}
+  inline Pos(const Pos &o) = default;
+  inline Pos(absl::string_view str) {
+    CHECK(scn::scan(str, "{},{}", i, j)) << "can't parse '" << str << "'.";
+  }
   inline bool operator==(const Pos &r) const { return i == r.i && j == r.j; }
   inline Pos operator+(const Pos &r) const { return {i + r.i, j + r.j}; }
   inline Pos operator*(i64 x) const { return {i * x, j * x}; }
+  inline bool operator<(const Pos &r) const { return i < r.i || (i == r.i && j < r.j); }
+  inline std::string toString() const { return fmt::format("{},{}", i, j); }
   template<typename H>
-  H AbslHashValue(H h, const Pos &p) {
+  friend H AbslHashValue(H h, const Pos &p) {
     return H::combine(std::move(h), p.i, p.j);
   }
 };
@@ -193,6 +201,43 @@ std::vector<UType> PrimeSieve(UType limit) {
   return primes;
 }
 
+template<typename UType>
+absl::flat_hash_map<UType, u64> Factorize(UType x, const std::vector<UType> &primes) {
+  absl::flat_hash_map<UType, u64> result{};
+  UType rem{x};
+  int pi = 0;
+  while (rem != 1 && pi < primes.size()) {
+    UType prime = primes[pi];
+    while (rem % prime == 0) {
+      result[prime]++;
+      rem /= prime;
+    }
+    pi++;
+  }
+  CHECK(rem == 1) << "Need more primes.";
+  return result;
+}
+
+template<typename UType>
+UType LCM(absl::flat_hash_set<UType> values) {
+  UType lcm = 1;
+  u64 max_value = *absl::c_max_element(values);
+  std::vector<UType> primes = aoc::util::PrimeSieve(max_value + 1);
+  absl::flat_hash_map<UType, u64> common_factors{};
+  for (UType value : values) {
+    auto factors = Factorize(value, primes);
+    for (auto [prime, power] : factors) {
+      if (common_factors[prime] < power) common_factors[prime] = power;
+    }
+  }
+  for (auto [prime, power] : common_factors) {
+    for (int i = 0; i < power; i++) {
+      lcm *= prime;
+    }
+  }
+  return lcm;
+}
+
 struct EigenMatrixHashWrapper {
   Eigen::MatrixXi m;
 };
@@ -242,7 +287,7 @@ struct formatter<aoc::Dir> : formatter<char> {
 
 template<>
 struct formatter<aoc::Pos> : formatter<string_view> {
-  inline auto format(const aoc::Pos& p, format_context &ctx) const {
+  inline auto format(const aoc::Pos &p, format_context &ctx) const {
     return formatter<string_view>::format(fmt::format("[{}, {}]", p.i, p.j), ctx);
   }
 };

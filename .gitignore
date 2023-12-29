@@ -78,6 +78,7 @@ fabric.properties
 
 /build/
 /libs/abseil-cpp
+/libs/boost_1_82_0
 /libs/cpp-lazy
 /libs/eigen
 /libs/fmt
