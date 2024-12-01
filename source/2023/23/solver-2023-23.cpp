@@ -2,6 +2,7 @@
 
 #include <absl/container/btree_map.h>
 #include <absl/container/btree_set.h>
+#include <absl/container/flat_hash_set.h>
 #include <fmt/format.h>
 
 namespace {
@@ -39,9 +40,13 @@ struct Edge {
     return a < o.a || (a == o.a && b < o.b) || (a == o.a && b == o.b && len < o.len);
   }
   bool operator==(const Edge &o) const { return a == o.a && b == o.b && len == o.len; }
+  template<typename H>
+  friend H AbslHashValue(H h, const Edge &e) {
+    return H::combine(std::move(h), e.a, e.b);
+  }
 };
 
-using Graph = absl::btree_map<NodeId, absl::btree_set<Edge>>;
+using Graph = absl::btree_map<NodeId, absl::flat_hash_set<Edge>>;
 
 Tile FromUnderlying(char c) {
   switch (c) {
@@ -184,7 +189,7 @@ Graph BuildUDAG(const Map &map, const aoc::Pos &start, const aoc::Pos &goal) {
     }
   }
   Graph graph{};
-  absl::btree_set<Edge> edges{};
+  absl::flat_hash_set<Edge> edges{};
   for (const auto &[node, exits] : node_exits) {
     for (auto exit : exits) {
       auto [target, steps] = FindNextNode(map, {node}, node_ids, exit);
@@ -214,10 +219,11 @@ u64 LongestPath(const Graph &graph, const NodeId &start, const NodeId &goal) {
       if (length > longest) longest = length;
       continue;
     }
-    absl::btree_set<NodeId> visited{path.begin(), path.end()};
     for (const auto &edge : graph.at(cur)) {
       const NodeId& other = edge.Other(cur);
-      if (visited.contains(other)) continue;
+      if (std::find(path.begin(), path.end(), other) != path.end()) {
+        continue;
+      }
       std::vector<NodeId> new_path{path.begin(), path.end()};
       new_path.push_back(other);
       State new_state{new_path, length + edge.len};
