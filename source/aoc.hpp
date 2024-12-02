@@ -160,6 +160,10 @@ auto result(T1 t1, T2 t2) -> std::tuple<std::string, std::string> {
 template<typename E>
 auto ToUnderlying(E e) { return static_cast<std::underlying_type_t<E>>(e); }
 
+inline i32 signum(i32 val) {
+  return (0 < val) - (val < 0);
+}
+
 namespace util {
 
 template<typename T>
