@@ -117,7 +117,6 @@ enum class Dir : char {
   W = '<',
 };
 static constexpr std::array<Dir, 4> kAllDirs{Dir::N, Dir::E, Dir::S, Dir::W};
-
 inline Pos MoveDir(Dir dir) {
   static std::array<Pos, 4> kDirMoves{{{-1, 0}, {0, 1}, {1, 0}, {0, -1}}};
   switch (dir) {
@@ -152,6 +151,31 @@ inline Dir TurnRight(Dir dir) {
   }
 }
 
+enum class Dir8 : char {
+  N = '^',
+  NE = '7',
+  E = '>',
+  SE = 'J',
+  S = 'v',
+  SW = 'L',
+  W = '<',
+  NW = 'F',
+};
+static constexpr std::array<Dir8, 8>
+    kAllDir8s{Dir8::N, Dir8::NE, Dir8::E, Dir8::SE, Dir8::S, Dir8::SW, Dir8::W, Dir8::NW};
+inline Pos MoveDir8(Dir8 dir) {
+  static std::array<Pos, 8> kDir8Moves{{{-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}}};
+  switch (dir) {
+    case Dir8::N: return kDir8Moves[0];
+    case Dir8::NE: return kDir8Moves[1];
+    case Dir8::E: return kDir8Moves[2];
+    case Dir8::SE: return kDir8Moves[3];
+    case Dir8::S: return kDir8Moves[4];
+    case Dir8::SW: return kDir8Moves[5];
+    case Dir8::W: return kDir8Moves[6];
+    case Dir8::NW: return kDir8Moves[7];
+  }
+}
 template<typename T1, typename T2>
 auto result(T1 t1, T2 t2) -> std::tuple<std::string, std::string> {
   return std::tuple{fmt::format("{}", t1), fmt::format("{}", t2)};
@@ -285,6 +309,12 @@ namespace fmt {
 template<>
 struct formatter<aoc::Dir> : formatter<char> {
   auto format(aoc::Dir dir, format_context &ctx) const {
+    return formatter<char>::format(aoc::ToUnderlying(dir), ctx);
+  }
+};
+template<>
+struct formatter<aoc::Dir8> : formatter<char> {
+  auto format(aoc::Dir8 dir, format_context &ctx) const {
     return formatter<char>::format(aoc::ToUnderlying(dir), ctx);
   }
 };
