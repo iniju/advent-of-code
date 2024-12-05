@@ -35,6 +35,7 @@ add_library(aoc_lib OBJECT
         source/2024/02/solver-2024-02.cpp
         source/2024/03/solver-2024-03.cpp
         source/2024/04/solver-2024-04.cpp
+        source/2024/05/solver-2024-05.cpp
 )
 
 target_include_directories(aoc_lib PUBLIC
