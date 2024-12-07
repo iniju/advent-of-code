@@ -188,6 +188,28 @@ inline i32 signum(i32 val) {
   return (0 < val) - (val < 0);
 }
 
+static constexpr std::array<u64, 20> kTenPowers{
+  1u,
+  10u,
+  100u,
+  1'000u,
+  10'000u,
+  100'000u,
+  1'000'000u,
+  10'000'000u,
+  100'000'000u,
+  1'000'000'000u,
+  10'000'000'000u,
+  100'000'000'000u,
+  1'000'000'000'000u,
+  10'000'000'000'000u,
+  100'000'000'000'000u,
+  1'000'000'000'000'000u,
+  10'000'000'000'000'000u,
+  100'000'000'000'000'000u,
+  1'000'000'000'000'000'000u,
+  10'000'000'000'000'000'000u};
+
 namespace util {
 
 template<typename T>
@@ -265,6 +287,12 @@ UType LCM(absl::flat_hash_set<UType> values) {
   }
   return lcm;
 }
+
+template<typename T> u32 NumDigits(T x);
+// partial specialization optimization for 64-bit numbers
+template<> u32 NumDigits(u64 x);
+// partial specialization optimization for 32-bit numbers
+template<> u32 NumDigits(u32 x);
 
 struct EigenMatrixHashWrapper {
   Eigen::MatrixXi m;

@@ -37,6 +37,7 @@ add_library(aoc_lib OBJECT
         source/2024/04/solver-2024-04.cpp
         source/2024/05/solver-2024-05.cpp
         source/2024/06/solver-2024-06.cpp
+        source/2024/07/solver-2024-07.cpp
 )
 
 target_include_directories(aoc_lib PUBLIC
@@ -71,5 +72,6 @@ target_link_libraries(aoc_lib PUBLIC
 add_executable(AoC
         source/main.cpp
         source/aoc.hpp
+        source/aoc.cpp
 )
 target_link_libraries(AoC PRIVATE aoc_lib)

@@ -3,13 +3,13 @@
 auto main() -> int {
   constexpr int YEAR{2024};
 
-  advent<YEAR, 1>::print();
-  advent<YEAR, 2>::print();
-  advent<YEAR, 3>::print();
-  advent<YEAR, 4>::print();
-  advent<YEAR, 5>::print();
-  advent<YEAR, 6>::print();
-//  advent<YEAR, 7>::print();
+//  advent<YEAR, 1>::print();
+//  advent<YEAR, 2>::print();
+//  advent<YEAR, 3>::print();
+//  advent<YEAR, 4>::print();
+//  advent<YEAR, 5>::print();
+//  advent<YEAR, 6>::print();
+  advent<YEAR, 7>::print();
 //  advent<YEAR, 8>::print();
 //  advent<YEAR, 9>::print();
 //  advent<YEAR, 10>::print();
