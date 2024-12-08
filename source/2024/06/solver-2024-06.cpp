@@ -15,14 +15,10 @@ using PosDir = std::pair<aoc::Pos, aoc::Dir>;
 using Visited = absl::flat_hash_set<aoc::Pos>;
 using Path = absl::flat_hash_set<PosDir>;
 
-bool IsOutOfMap(u64 height, u64 width, const aoc::Pos &pos) {
-  return pos.i < 0 || pos.i >= height || pos.j < 0 || pos.j >= width;
-}
-
 bool TryMove(const Map &map, u64 height, u64 width, aoc::Pos &pos, aoc::Dir &dir) {
   while (true) {
     auto new_pos = pos + aoc::MoveDir(dir);
-    if (IsOutOfMap(height, width, new_pos)) return false;
+    if (aoc::util::IsOutOfMap(height, width, new_pos)) return false;
     if (map.at(new_pos.i).at(new_pos.j) != MapPos::BLOCKED) {
       pos = new_pos;
       return true;
@@ -38,7 +34,7 @@ Visited WalkMap(const Map &map, u64 height, u64 width, const aoc::Pos &start) {
   Visited visited;
   visited.insert(pos);
   while (TryMove(map, height, width, pos, dir)) {
-    if (IsOutOfMap(height, width, pos)) break;
+    if (aoc::util::IsOutOfMap(height, width, pos)) break;
     if (visited.insert(pos).second) {
       result++;
     }
@@ -64,12 +60,12 @@ u64 WalkMapWithLoops(Map &map, u64 height, u64 width, const aoc::Pos &start) {
   visited.insert({pos, dir});
   walked.insert(pos);
   while (TryMove(map, height, width, pos, dir)) {
-    if (IsOutOfMap(height, width, pos)) break;
+    if (aoc::util::IsOutOfMap(height, width, pos)) break;
     visited.insert({pos, dir});
     walked.insert(pos);
     // Try block in front.
     auto block = pos + aoc::MoveDir(dir);
-    if (IsOutOfMap(height, width, block)) {
+    if (aoc::util::IsOutOfMap(height, width, block)) {
       // Escaping map, never mind.
       continue;
     }
@@ -78,7 +74,7 @@ u64 WalkMapWithLoops(Map &map, u64 height, u64 width, const aoc::Pos &start) {
       // If the right is also blocked (checked later), there's no point trying further right, the guard just walked in
       // from there.
       block = pos + aoc::MoveDir(aoc::TurnRight(dir));
-      if (IsOutOfMap(height, width, block)) {
+      if (aoc::util::IsOutOfMap(height, width, block)) {
         // Escaping map, never mind.
         continue;
       }

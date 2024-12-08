@@ -102,6 +102,7 @@ struct Pos {
   }
   inline bool operator==(const Pos &r) const { return i == r.i && j == r.j; }
   inline Pos operator+(const Pos &r) const { return {i + r.i, j + r.j}; }
+  inline Pos operator-(const Pos &r) const { return {i - r.i, j - r.j}; }
   inline Pos operator*(i64 x) const { return {i * x, j * x}; }
   inline bool operator<(const Pos &r) const { return i < r.i || (i == r.i && j < r.j); }
   inline std::string toString() const { return fmt::format("{},{}", i, j); }
@@ -211,6 +212,13 @@ static constexpr std::array<u64, 20> kTenPowers{
   10'000'000'000'000'000'000u};
 
 namespace util {
+
+inline bool IsInMap(u64 height, u64 width, const Pos& pos) {
+  return pos.i >= 0 && pos.i < height && pos.j >= 0 && pos.j < width;
+}
+inline bool IsOutOfMap(u64 height, u64 width, const aoc::Pos &pos) {
+  return pos.i < 0 || pos.i >= height || pos.j < 0 || pos.j >= width;
+}
 
 template<typename T>
 std::vector<T> TokenizeInput(absl::string_view input,
