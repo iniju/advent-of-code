@@ -117,6 +117,15 @@ enum class Dir : char {
   S = 'v',
   W = '<',
 };
+inline Dir ParseDir(char ch) {
+  switch (ch) {
+    case '^': return Dir::N;
+    case '>': return Dir::E;
+    case 'v': return Dir::S;
+    case '<': return Dir::W;
+    default: CHECK(false) << "Unknown Dir representation '" << ch << "'.";
+  }
+}
 static constexpr std::array<Dir, 4> kAllDirs{Dir::N, Dir::E, Dir::S, Dir::W};
 inline Pos MoveDir(Dir dir) {
   static std::array<Pos, 4> kDirMoves{{{-1, 0}, {0, 1}, {1, 0}, {0, -1}}};
