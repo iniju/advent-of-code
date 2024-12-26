@@ -4,37 +4,75 @@
 
 namespace {
 
-enum MapPos : char {
+enum Tile : char {
   EMPTY = '.',
   BLOCKED = '#',
 };
 
-using Row = std::vector<MapPos>;
-using Map = std::vector<Row>;
-using PosDir = std::pair<aoc::Pos, aoc::Dir>;
-using Visited = absl::flat_hash_set<aoc::Pos>;
+class Map {
+  u64 _height;
+  u64 _width;
+  std::vector<Tile> _map;
+  absl::flat_hash_map<char, i64> _specials;
+
+ public:
+  Map(absl::string_view input,
+      const absl::flat_hash_map<char, Tile> &tile_mapping,
+      const absl::flat_hash_set<char> &specials) {
+    std::vector<absl::string_view> lines = absl::StrSplit(input, "\n", absl::SkipWhitespace());
+    _height = lines.size();
+    _width = lines.at(0).size();
+    auto joined = absl::StrJoin(lines, "");
+    absl::c_transform(joined, std::back_inserter(_map), [&tile_mapping](char ch) {
+      return tile_mapping.at(ch);
+    });
+    for (char special : specials) _specials[special] = static_cast<i64>(joined.find('^'));
+  }
+  void SetTile(i64 pos, Tile tile) {
+    _map[pos] = tile;
+  }
+  [[nodiscard]] i64 GetSpecial(char ch) const {
+    return _specials.at(ch);
+  }
+  [[nodiscard]] i64 MoveDir(aoc::Dir dir) const {
+    switch (dir) {
+      case aoc::Dir::N: return static_cast<i64>(-_width);
+      case aoc::Dir::E: return 1;
+      case aoc::Dir::S: return static_cast<i64>(_width);
+      case aoc::Dir::W: return -1;
+    }
+  }
+  bool TryMove(i64 &pos, aoc::Dir &dir) const {
+    while (true) {
+      i64 new_pos = pos + MoveDir(dir);
+      switch (dir) {
+        case aoc::Dir::N:
+        case aoc::Dir::S:if (new_pos < 0 || new_pos >= _map.size()) return false;
+          break;
+        case aoc::Dir::E:
+        case aoc::Dir::W:if (new_pos / _width != pos / _width) return false;
+          break;
+      }
+      if (_map.at(new_pos) != Tile::BLOCKED) {
+        pos = new_pos;
+        return true;
+      }
+      dir = aoc::TurnRight(dir);
+    }
+  }
+};
+
+using PosDir = std::pair<i64, aoc::Dir>;
+using Visited = absl::flat_hash_set<i64>;
 using Path = absl::flat_hash_set<PosDir>;
 
-bool TryMove(const Map &map, u64 height, u64 width, aoc::Pos &pos, aoc::Dir &dir) {
-  while (true) {
-    auto new_pos = pos + aoc::MoveDir(dir);
-    if (aoc::util::IsOutOfMap(height, width, new_pos)) return false;
-    if (map.at(new_pos.i).at(new_pos.j) != MapPos::BLOCKED) {
-      pos = new_pos;
-      return true;
-    }
-    dir = aoc::TurnRight(dir);
-  }
-}
-
-Visited WalkMap(const Map &map, u64 height, u64 width, const aoc::Pos &start) {
+Visited WalkMap2D(const Map &map, i64 start) {
   u64 result = 1;
-  aoc::Pos pos = start;
+  i64 pos = start;
   aoc::Dir dir = aoc::Dir::N;
   Visited visited;
   visited.insert(pos);
-  while (TryMove(map, height, width, pos, dir)) {
-    if (aoc::util::IsOutOfMap(height, width, pos)) break;
+  while (map.TryMove(pos, dir)) {
     if (visited.insert(pos).second) {
       result++;
     }
@@ -42,47 +80,34 @@ Visited WalkMap(const Map &map, u64 height, u64 width, const aoc::Pos &start) {
   return visited;
 }
 
-bool DetectLoop(const Map &map, u64 height, u64 width, const aoc::Pos &start, const Path &visited, aoc::Dir dir) {
-  aoc::Pos pos = start;
+bool DetectLoop(const Map &map, i64 start, const Path &visited, aoc::Dir dir) {
+  i64 pos = start;
   Path path{visited};
-  while (TryMove(map, height, width, pos, dir)) {
+  while (map.TryMove(pos, dir)) {
     if (!path.insert({pos, dir}).second) return true;
   }
   return false;
 }
 
-u64 WalkMapWithLoops(Map &map, u64 height, u64 width, const aoc::Pos &start) {
+u64 WalkMapWithLoops(Map &map, i64 start) {
   u64 result = 0;
-  aoc::Pos pos = start;
+  i64 pos = start;
   aoc::Dir dir = aoc::Dir::N;
   Path visited;
-  absl::flat_hash_set<aoc::Pos> walked;
+  absl::flat_hash_set<i64> walked;
   visited.insert({pos, dir});
   walked.insert(pos);
-  while (TryMove(map, height, width, pos, dir)) {
-    if (aoc::util::IsOutOfMap(height, width, pos)) break;
+  while (map.TryMove(pos, dir)) {
     visited.insert({pos, dir});
     walked.insert(pos);
-    // Try block in front.
-    auto block = pos + aoc::MoveDir(dir);
-    if (aoc::util::IsOutOfMap(height, width, block)) {
-      // Escaping map, never mind.
-      continue;
-    }
-    if (map.at(block.i).at(block.j) == MapPos::BLOCKED) {
-      // Front is already blocked, anticipate turn to the right and block the right instead.
-      // If the right is also blocked (checked later), there's no point trying further right, the guard just walked in
-      // from there.
-      block = pos + aoc::MoveDir(aoc::TurnRight(dir));
-      if (aoc::util::IsOutOfMap(height, width, block)) {
-        // Escaping map, never mind.
-        continue;
-      }
-    }
-    if (map.at(block.i).at(block.j) == MapPos::EMPTY && !walked.contains(block)) {
-      map[block.i][block.j] = MapPos::BLOCKED;
-      if (DetectLoop(map, height, width, pos, visited, aoc::TurnRight(dir))) result++;
-      map[block.i][block.j] = MapPos::EMPTY;
+    auto block = pos;
+    auto block_dir = dir;
+    if (!map.TryMove(block, block_dir)) continue;
+    if (block_dir == aoc::OppositeDir(dir)) continue;
+    if (!walked.contains(block)) {
+      map.SetTile(block, Tile::BLOCKED);
+      if (DetectLoop(map, pos, visited, aoc::TurnRight(dir))) result++;
+      map.SetTile(block, Tile::EMPTY);
     }
   }
   return result;
@@ -92,59 +117,20 @@ u64 WalkMapWithLoops(Map &map, u64 height, u64 width, const aoc::Pos &start) {
 
 namespace fmt {
 
-//template<>
-//struct formatter<MapPos> : formatter<char> {
-//  auto format(MapPos pos, format_context &ctx) const {
-//    return formatter<char>::format(aoc::ToUnderlying(pos), ctx);
-//  }
-//};
-//template<>
-//struct formatter<std::vector<MapPos>> : formatter<string_view> {
-//  auto format(std::vector<MapPos> row, format_context &ctx) const {
-//    return formatter<string_view>::format(fmt::format("{}", join(row, "")), ctx);
-//  }
-//};
-//template<>
-//struct formatter<Map> : formatter<string_view> {
-//  auto format(const Map &map, format_context &ctx) const {
-//    return formatter<string_view>::format(fmt::format("{}", join(map, "\n")), ctx);
-//  }
-//};
-
 }  // namespace fmt
 
 template<>
 auto advent<2024, 06>::solve() -> Result {
   std::string input = GetInput();
-  std::vector<absl::string_view> lines = absl::StrSplit(input, "\n", absl::SkipWhitespace());
-  u64 height = lines.size();
-  u64 width = lines.at(0).size();
-  Map map;
-  aoc::Pos guard;
-  for (u64 i = 0; i < height; i++) {
-    Row row;
-    for (u64 j = 0; j < width; j++) {
-      switch (lines.at(i).at(j)) {
-        case '.':row.push_back(MapPos::EMPTY);
-          break;
-        case '#':row.push_back(MapPos::BLOCKED);
-          break;
-        case '^':row.push_back(MapPos::EMPTY);
-          guard.i = static_cast<i64>(i);
-          guard.j = static_cast<i64>(j);
-          break;
-        default: CHECK(false) << "Unexpected map character: '" << lines.at(i).at(j) << "'.";
-      }
-    }
-    map.push_back(row);
-  }
+  Map map(input, {{'.', Tile::EMPTY}, {'^', Tile::EMPTY}, {'#', Tile::BLOCKED}}, {'^'});
+  i64 guard = map.GetSpecial('^');
 
   // Part 1
-  auto visited = WalkMap(map, height, width, guard);
+  auto visited = WalkMap2D(map, guard);
   u64 part1 = visited.size();
 
   // Part 2
-  u64 part2 = WalkMapWithLoops(map, height, width, guard);
+  u64 part2 = WalkMapWithLoops(map, guard);
 
   return aoc::result(part1, part2);
 }
