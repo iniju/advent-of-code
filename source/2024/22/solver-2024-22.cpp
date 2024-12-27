@@ -5,12 +5,12 @@
 namespace {
 
 using Secret = u32;
-using Price = i8;
+using DiffSeq = u32;
 
 inline Secret GetNextSecret(Secret secret) {
-  Secret result = ((secret << 6) ^ secret) & 0xFFFFFF;
-  result = ((result >> 5) ^ result) & 0xFFFFFF;
-  return ((result << 11) ^ result) & 0xFFFFFF;
+  secret = (secret ^ (secret << 6)) & 0xFFFFFF;
+  secret = (secret ^ (secret >> 5)) & 0xFFFFFF;
+  return (secret ^ (secret << 11)) & 0xFFFFFF;
 }
 
 }  // namespace
@@ -24,47 +24,35 @@ auto advent<2024, 22>::solve() -> Result {
   std::string input = GetInput();
   std::vector<Secret> initial_secrets = aoc::util::TokenizeInput<Secret>(input, [](auto line) {
     Secret val;
-    CHECK(scn::scan(line, "{}", val)) << "Unable to parse '" << line << "'.";
+    CHECK(std::from_chars(line.data(), line.data() + line.size(), val).ec == std::errc{})
+            << "Unable to parse '" << line << "'.";
     return val;
   });
 
-  // Part 1
+  // Part 1 & Part 2
   u64 part1 = 0;
-  std::deque<Price> diff_seq;
-  absl::flat_hash_set<std::deque<Price>> all_diff_seqs;
-  std::deque<absl::flat_hash_map<std::deque<Price>, Price>> seq_to_price;
-  for (Secret initial_secret : initial_secrets) {
-    Secret secret = initial_secret;
-    auto old_price = static_cast<Price>(secret % 10);
-    diff_seq.clear();
-    seq_to_price.emplace_back();
+  DiffSeq diff_seq{0};
+  std::vector<u32> seen(0xFFFFF, std::numeric_limits<u32>::max());
+  std::vector<u32> bought(0xFFFFF, 0);
+  for (u32 buyer = 0; buyer < initial_secrets.size(); buyer++) {
+    Secret secret = initial_secrets.at(buyer);
+    auto old_price = secret % 10;
     for (u16 i = 0; i < 2000; i++) {
       secret = GetNextSecret(secret);
-      auto price = static_cast<Price>(secret % 10);
-      auto price_diff = static_cast<i8>(price - old_price);
+      auto price = secret % 10;
+      auto price_diff = price - old_price + 9;
       old_price = price;
-      diff_seq.push_back(price_diff);
-      if (i < 3) continue; else if (i > 3) diff_seq.pop_front();
-      if (seq_to_price.back().contains(diff_seq)) continue;
-      seq_to_price.back()[diff_seq] = price;
-      all_diff_seqs.insert(diff_seq);
+      diff_seq <<= 5;
+      diff_seq |= price_diff;
+      if (i < 3) continue; else diff_seq &= 0xFFFFF;
+
+      if (seen.at(diff_seq) == buyer) continue;
+      seen[diff_seq] = buyer;
+      bought[diff_seq] += price;
     }
     part1 += secret;
   }
-
-  // Part 2
-  i32 max_bananas = 0;
-  for (const auto &diff_sequence : all_diff_seqs) {
-    i32 bananas = 0;
-    for (const auto &seq_price_map : seq_to_price) {
-      if (!seq_price_map.contains(diff_sequence)) continue;
-      bananas += seq_price_map.at(diff_sequence);
-    }
-    if (max_bananas < bananas) {
-      max_bananas = bananas;
-    }
-  }
-  u64 part2 = max_bananas;
+  u64 part2 = *absl::c_max_element(bought);
 
   return aoc::result(part1, part2);
 }
