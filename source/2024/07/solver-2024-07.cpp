@@ -11,7 +11,6 @@ using Equations = std::vector<Equation>;
 enum class Op : u16 {
   ADD, MUL, CONCAT
 };
-using OpSet = std::vector<Op>;
 
 u64 ApplyOp(u64 left, u64 right, Op op) {
   switch (op) {
@@ -23,48 +22,48 @@ u64 ApplyOp(u64 left, u64 right, Op op) {
     }
   }
 }
-u64 ApplyOpSet(const Operands& operands, const OpSet& operators) {
-  u64 result = operands.at(0);
-  for (u64 i = 0; i < operators.size(); i++) {
-    result = ApplyOp(result, operands.at(i + 1), operators.at(i));
-  }
-  return result;
-}
-bool NextCombination(OpSet& op_set, u16 op_num) {
-  u32 op_size = op_set.size();
-  for (u32 i = 0; i < op_size; i++) {
-    u16 op_ord = aoc::ToUnderlying(op_set[i]);
-    if (op_ord < op_num - 1) {
-      op_set[i] = static_cast<Op>(op_ord + 1);
-      return true;
+
+std::pair<bool, u64> IsValid(u64 goal, u64 cur, const Operands &operands, u16 operand_i, bool use_concat) {
+  if (cur > goal) return std::make_pair(false, 0);
+  if (operand_i == operands.size() - 1) {
+    u64 result = ApplyOp(cur, operands.at(operand_i), Op::ADD);
+    if (goal == result) return std::make_pair(true, result);
+    result = ApplyOp(cur, operands.at(operand_i), Op::MUL);
+    if (goal == result) return std::make_pair(true, result);
+    if (use_concat) {
+      result = ApplyOp(cur, operands.at(operand_i), Op::CONCAT);
+      if (goal == result) return std::make_pair(true, result);
     }
-    if (i == op_size - 1) return false;
-    op_set[i] = Op::ADD;
+    return std::make_pair(false, 0);
   }
-  fmt::print("Should never reach here.\n");
-  return false;
+  auto result = IsValid(goal, ApplyOp(cur, operands.at(operand_i), Op::ADD), operands, operand_i + 1, use_concat);
+  if (result.first)
+    return
+        result;
+  result = IsValid(goal, ApplyOp(cur, operands.at(operand_i), Op::MUL), operands, operand_i + 1, use_concat);
+  if (result.first)
+    return
+        result;
+  if (use_concat) {
+    result = IsValid(goal, ApplyOp(cur, operands.at(operand_i), Op::CONCAT), operands, operand_i + 1, use_concat);
+    if (result.first)
+      return
+          result;
+  }
+  return std::make_pair(false, 0);
 }
 
 }  // namespace
 
 namespace fmt {
 
-template<>
-struct formatter<Op> : formatter<char> {
-  auto format(Op op, format_context &ctx) const {
-    switch (op) {
-      case Op::ADD: return formatter<char>::format('+', ctx);
-      case Op::MUL: return formatter<char>::format('*', ctx);
-      case Op::CONCAT: return formatter<char>::format('|', ctx);
-    }
-  }
-};
-
 }  // namespace fmt
 
 template<>
 auto advent<2024, 07>::solve() -> Result {
   std::string input = GetInput();
+  auto start_0 = std::chrono::high_resolution_clock::now();
+
   Equations equations = aoc::util::TokenizeInput<Equation>(input, [](auto line) {
     std::vector<std::string> parts = absl::StrSplit(line, ": ", absl::SkipWhitespace());
     CHECK(parts.size() == 2) << "Unexpected format in '" << line << "'.";
@@ -75,39 +74,26 @@ auto advent<2024, 07>::solve() -> Result {
   });
 
   // Part 1
+  auto start_1 = std::chrono::high_resolution_clock::now();
   u64 part1 = 0;
   Equations invalid_equations;
-  for (const auto& equation : equations) {
-    u64 op_num = equation.second.size() - 1;
-    OpSet op_comb(op_num, Op::ADD);
-    bool valid = false;
-    do {
-      u64 result = ApplyOpSet(equation.second, op_comb);
-      if (result == equation.first) {
-        part1 += result;
-        valid = true;
-        break;
-      }
-    } while (NextCombination(op_comb, 2));
-    if (!valid) invalid_equations.push_back(equation);
+  for (const auto &equation : equations) {
+    auto [valid, result] = IsValid(equation.first, equation.second.at(0), equation.second, 1, false);
+    if (valid) part1 += result; else invalid_equations.push_back(equation);
   }
 
   // Part 2
+  auto start_2 = std::chrono::high_resolution_clock::now();
   u64 part2 = part1;
-  for (const auto& equation : invalid_equations) {
-    u64 op_num = equation.second.size() - 1;
-    OpSet op_comb(op_num, Op::ADD);
-    op_comb[0] = Op::CONCAT;
-    do {
-      // Skip if we don't use any CONCAT, since we already checked all these and they failed for this case.
-      if (absl::c_find(op_comb, Op::CONCAT) == op_comb.end()) continue;
-      u64 result = ApplyOpSet(equation.second, op_comb);
-      if (result == equation.first) {
-        part2 += result;
-        break;
-      }
-    } while (NextCombination(op_comb, 3));
+  for (const auto &equation : invalid_equations) {
+    auto [valid, result] = IsValid(equation.first, equation.second.at(0), equation.second, 1, true);
+    if (valid) part2 += result;
   }
+  auto end = std::chrono::high_resolution_clock::now();
+  fmt::print("Parsing: {:0.5f} sec\nPart 1: {:0.5f} sec\nPart 2: {:0.5f} sec\n",
+             (long double) std::chrono::duration_cast<std::chrono::nanoseconds>(start_1 - start_0).count() / 1.0e9l,
+             (long double) std::chrono::duration_cast<std::chrono::nanoseconds>(start_2 - start_1).count() / 1.0e9l,
+             (long double) std::chrono::duration_cast<std::chrono::nanoseconds>(end - start_2).count() / 1.0e9l);
 
   return aoc::result(part1, part2);
 }
