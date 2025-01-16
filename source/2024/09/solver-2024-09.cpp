@@ -1,8 +1,5 @@
 #include <aoc.hpp>
 
-#include <absl/container/btree_map.h>
-#include <fmt/format.h>
-
 namespace {
 
 using Block = struct {
@@ -12,31 +9,6 @@ using Block = struct {
 };
 using Disk = std::vector<Block>;
 using Blocks = std::vector<std::vector<Block>>;
-
-void PrintDisk(const Disk &disk) {
-  for (const auto &block : disk) {
-    for (u64 i = 0; i < block.size; i++) {
-      fmt::print("{:c}", block.free ? '.' : '0' + block.id);
-    }
-  }
-  fmt::print("\n");
-  fflush(stdout);
-}
-void PrintDisk(const Blocks &blocks) {
-  u64 rows = 0;
-  for (const auto &block : blocks) {
-    for (const auto &b : block) {
-      for (u64 i = 0; i < b.size; i++) {
-        fmt::print("{:c}", b.free ? '.' : '0' + b.id);
-      }
-    }
-    fmt::print("\n");
-    rows++;
-    if (rows > 10) break;
-  }
-  fmt::print("\n");
-  fflush(stdout);
-}
 
 u64 CalcCheckSum(const Disk &disk) {
   u64 result = 0;
