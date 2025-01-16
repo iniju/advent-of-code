@@ -10,7 +10,7 @@ using Block = struct {
   bool free;
   u64 size;
 };
-using Disk = std::deque<Block>;
+using Disk = std::vector<Block>;
 using Blocks = std::vector<std::vector<Block>>;
 
 void PrintDisk(const Disk &disk) {
@@ -25,7 +25,7 @@ void PrintDisk(const Disk &disk) {
 void PrintDisk(const Blocks &blocks) {
   u64 rows = 0;
   for (const auto &block : blocks) {
-    for (const auto& b : block) {
+    for (const auto &b : block) {
       for (u64 i = 0; i < b.size; i++) {
         fmt::print("{:c}", b.free ? '.' : '0' + b.id);
       }
@@ -38,33 +38,25 @@ void PrintDisk(const Blocks &blocks) {
   fflush(stdout);
 }
 
-u64 CalcCheckSum(const Disk& disk) {
+u64 CalcCheckSum(const Disk &disk) {
   u64 result = 0;
   u64 pos = 0;
-  for (const auto& block : disk) {
-    if (block.free) {
-      pos += block.size;
-      continue;
-    }
-    for (u64 i = 0; i < block.size; i++) {
-      result += block.id * (pos + i);
+  for (const auto &block : disk) {
+    if (!block.free) {
+      result += block.id * (block.size * pos + (block.size * (block.size - 1) / 2));
     }
     pos += block.size;
   }
   return result;
 }
 
-u64 CalcCheckSum(const Blocks& blocks) {
+u64 CalcCheckSum(const Blocks &blocks) {
   u64 result = 0;
   u64 pos = 0;
-  for (const auto& block : blocks) {
-    for (const auto& b : block) {
-      if (b.free) {
-        pos += b.size;
-        continue;
-      }
-      for (u64 i = 0; i < b.size; i++) {
-        result += b.id * (pos + i);
+  for (const auto &block : blocks) {
+    for (const auto &b : block) {
+      if (!b.free) {
+        result += b.id * (b.size * pos + (b.size * (b.size - 1) / 2));
       }
       pos += b.size;
     }
@@ -83,6 +75,7 @@ auto advent<2024, 9>::solve() -> Result {
   std::string input = GetInput();
 
   Disk disk;
+  disk.reserve(input.size());
   bool is_file = true;
   u64 id = 0;
   for (char ch : input) {
@@ -121,11 +114,12 @@ auto advent<2024, 9>::solve() -> Result {
 
   // Part 2
   Blocks blocks;
-  for (const auto& block : disk) blocks.push_back({block});
+  blocks.reserve(disk.size());
+  for (const auto &block : disk) blocks.push_back({block});
 
   next_free = 1;
   for (u64 file_i = disk.size() - 1; file_i > 1; file_i -= 2) {
-    auto& file_block = blocks[file_i].front();
+    auto &file_block = blocks[file_i].front();
     CHECK(blocks.at(file_i).size() == 1) << "This block position should only have a single block.";
     CHECK(!file_block.free) << "This block should be file.";
     // Find first free block, of any size.
