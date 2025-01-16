@@ -9,13 +9,14 @@ using Block = struct {
 };
 using Disk = std::vector<Block>;
 using Blocks = std::vector<std::vector<Block>>;
+constexpr u64 size_triangles[]{0, 0, 1, 3, 6, 10, 15, 21, 28, 36};
 
 u64 CalcCheckSum(const Disk &disk) {
   u64 result = 0;
   u64 pos = 0;
   for (const auto &block : disk) {
     if (!block.free) {
-      result += block.id * (block.size * pos + (block.size * (block.size - 1) / 2));
+      result += block.id * (block.size * pos + size_triangles[block.size]);
     }
     pos += block.size;
   }
@@ -28,7 +29,7 @@ u64 CalcCheckSum(const Blocks &blocks) {
   for (const auto &block : blocks) {
     for (const auto &b : block) {
       if (!b.free) {
-        result += b.id * (b.size * pos + (b.size * (b.size - 1) / 2));
+        result += b.id * (b.size * pos + size_triangles[b.size]);
       }
       pos += b.size;
     }
