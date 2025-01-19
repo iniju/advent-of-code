@@ -1,0 +1,30 @@
+{
+  "name" : "aoc",
+  "version-string" : "1.0.0",
+  "builtin-baseline" : "cf035d9916a0a23042b41fcae7ee0386d245af08",
+  "dependencies" : [ {
+    "name" : "abseil",
+    "version>=" : "20240722.0"
+  }, {
+    "name" : "eigen3",
+    "version>=" : "3.4.0#5"
+  }, {
+    "name" : "fast-float",
+    "version>=" : "6.1.6"
+  }, {
+    "name" : "fmt",
+    "version>=" : "11.0.2#1"
+  }, {
+    "name" : "re2",
+    "version>=" : "2024-07-02"
+  }, {
+    "name" : "vcpkg-cmake-config",
+    "version>=" : "2024-05-23"
+  }, {
+    "name" : "vcpkg-cmake",
+    "version>=" : "2024-04-23"
+  }, {
+    "name" : "scnlib",
+    "version>=" : "4.0.1"
+  } ]
+}
