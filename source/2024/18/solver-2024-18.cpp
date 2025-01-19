@@ -94,7 +94,7 @@ auto advent<2024, 18>::solve() -> Result {
   std::string input = GetInput();
   std::vector<aoc::Pos> bytes = aoc::util::TokenizeInput<aoc::Pos>(input, [](auto line) {
     std::vector<u32> vals;
-    CHECK(scn::scan_list_ex(line, vals, scn::list_separator(','))) << "Couldn't parse line '" << line << "'.";
+    aoc::util::ScanList(line, vals, ",");
     CHECK(vals.size() == 2) << "Found less than expected values in '" << line << "'.";
     return aoc::Pos(vals.at(1), vals.at(0));
   });

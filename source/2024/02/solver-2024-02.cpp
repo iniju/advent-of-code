@@ -7,7 +7,7 @@ namespace {
 using Report = std::vector<i32>;
 using Reports = std::vector<Report>;
 
-bool IsSafe(const Report& report) {
+bool IsSafe(const Report &report) {
   i32 init_delta = report.at(1) - report.at(0);
   if (init_delta == 0 || init_delta > 3 || init_delta < -3) return false;
   for (i32 i = 2; i < report.size(); i++) {
@@ -30,7 +30,7 @@ auto advent<2024, 02>::solve() -> Result {
       input,
       [](absl::string_view line) {
         Report report;
-        CHECK(scn::scan_list(line, report)) << "Unable to parse line '" << line << "'.";
+        aoc::util::ScanList(line, report);
         return report;
       });
 

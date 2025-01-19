@@ -16,7 +16,7 @@ SplitStones SplitStone(Stone stone, u32 digits) {
   return {left, stone - left * aoc::kTenPowers[digits]};
 }
 
-u64 Blink(Stone stone, u32 times, Cache& cache) {
+u64 Blink(Stone stone, u32 times, Cache &cache) {
   if (times == 0) return 1;
   u64 result;
   StoneTimes key{stone, times};
@@ -48,9 +48,9 @@ template<>
 auto advent<2024, 11>::solve() -> Result {
   std::string input = GetInput();
   Stones stones = aoc::util::TokenizeInput<Stone>(input, [](auto token) {
-    Stone stone;
-    CHECK(scn::scan(token, "{}", stone)) << "Couldn't parse '" << token << "'.";
-    return stone;
+    auto result = scn::scan<u64>(token, "{}");
+    CHECK(result) << "Couldn't parse '" << token << "'.";
+    return result->value();
   }, " ");
 
   // Part 1

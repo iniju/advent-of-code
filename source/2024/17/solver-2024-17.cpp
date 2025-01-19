@@ -67,8 +67,7 @@ auto advent<2024, 17>::solve() -> Result {
   }
   auto program_str = lines[3].substr(lines[3].find(' ') + 1);
   std::vector<u8> program;
-  CHECK(scn::scan_list_ex(program_str, program, scn::list_separator(',')))
-          << "Couldn't parse program from '" << program_str << "'.";
+  aoc::util::ScanList(program_str, program, ",");
 
   // Part 1
   u16 instruction = 0;

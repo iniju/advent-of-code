@@ -38,13 +38,18 @@ auto advent<2024, 05>::solve() -> Result {
 
   Rules rules;
   for (auto line : absl::StrSplit(parts[0], "\n", absl::SkipWhitespace())) {
-    u32 x, y;
-    CHECK(scn::scan(line, "{}|{}", x, y)) << "Could parse line '"<< line <<"'.";
-    rules[x].insert(y);
+    auto result = scn::scan<u32, u32>(line, "{}|{}");
+    CHECK(result) << "Could parse line '"<< line <<"'.";
+    rules[std::get<0>(result->values())].insert(std::get<1>(result->values()));
   }
   PageSets page_sets = aoc::util::TokenizeInput<Pages>(parts[1], [](auto line){
     Pages pages;
-    CHECK(scn::scan_list_ex(line, pages, scn::list_separator((',')))) << "Can't parse line '" << line << "'.";
+//    absl::c_transform(absl::StrSplit(line, ","), std::back_inserter(pages), [](auto token) {
+//      auto result = scn::scan<u32>(token, "{}");
+//      CHECK(result) << "Can't parse token '" <<token << "'.";
+//      return result->value();
+//    });
+    aoc::util::ScanList(line, pages, ",");
     return pages;
   });
 

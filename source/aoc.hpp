@@ -6,6 +6,7 @@
 #include <charconv>
 #include <cmath>
 #include <cstdint>
+#include <chrono>
 #include <deque>
 #include <fstream>
 #include <functional>
@@ -36,11 +37,7 @@
 #include <fmt/core.h>
 #include <fmt/ranges.h>
 
-#include <scn/scn.h>
-
-#undef LZ_STANDALONE
-
-#include <Lz/Lz.hpp>
+#include <scn/scan.h>
 
 // convenience aliases
 using i8 = std::int8_t;
@@ -98,7 +95,9 @@ struct Pos {
   inline Pos(i64 _i, i64 _j) : i(_i), j(_j) {}
   inline Pos(const Pos &o) = default;
   inline Pos(absl::string_view str) {
-    CHECK(scn::scan(str, "{},{}", i, j)) << "can't parse '" << str << "'.";
+    auto result = scn::scan<i64, i64>(str, "{},{}");
+    CHECK(result) << "can't parse '" << str << "'.";
+    std::tie(i, j) = result->values();
   }
   inline bool operator==(const Pos &r) const { return i == r.i && j == r.j; }
   inline Pos operator+(const Pos &r) const { return {i + r.i, j + r.j}; }
@@ -199,30 +198,30 @@ inline i32 signum(i32 val) {
 }
 
 static constexpr std::array<u64, 20> kTenPowers{
-  1u,
-  10u,
-  100u,
-  1'000u,
-  10'000u,
-  100'000u,
-  1'000'000u,
-  10'000'000u,
-  100'000'000u,
-  1'000'000'000u,
-  10'000'000'000u,
-  100'000'000'000u,
-  1'000'000'000'000u,
-  10'000'000'000'000u,
-  100'000'000'000'000u,
-  1'000'000'000'000'000u,
-  10'000'000'000'000'000u,
-  100'000'000'000'000'000u,
-  1'000'000'000'000'000'000u,
-  10'000'000'000'000'000'000u};
+    1u,
+    10u,
+    100u,
+    1'000u,
+    10'000u,
+    100'000u,
+    1'000'000u,
+    10'000'000u,
+    100'000'000u,
+    1'000'000'000u,
+    10'000'000'000u,
+    100'000'000'000u,
+    1'000'000'000'000u,
+    10'000'000'000'000u,
+    100'000'000'000'000u,
+    1'000'000'000'000'000u,
+    10'000'000'000'000'000u,
+    100'000'000'000'000'000u,
+    1'000'000'000'000'000'000u,
+    10'000'000'000'000'000'000u};
 
 namespace util {
 
-inline bool IsInMap(u64 height, u64 width, const Pos& pos) {
+inline bool IsInMap(u64 height, u64 width, const Pos &pos) {
   return pos.i >= 0 && pos.i < height && pos.j >= 0 && pos.j < width;
 }
 inline bool IsOutOfMap(u64 height, u64 width, const aoc::Pos &pos) {
@@ -230,12 +229,22 @@ inline bool IsOutOfMap(u64 height, u64 width, const aoc::Pos &pos) {
 }
 
 template<typename T>
+void ScanList(absl::string_view input, std::vector<T> &list, absl::string_view separator = " ") {
+  absl::c_transform(absl::StrSplit(input, separator), std::back_inserter(list), [](auto token) {
+    auto result = scn::scan<T>(token, "{}");
+    CHECK(result) << "Can't parse token '" << token << "'.";
+    return result->value();
+  });
+}
+
+template<typename T>
 std::vector<T> TokenizeInput(absl::string_view input,
                              std::function<T(absl::string_view)> transform,
                              absl::string_view separator = "\n") {
-  std::vector<absl::string_view> tokens =
-      absl::StrSplit(input, separator, absl::SkipWhitespace());
-  auto result = lz::map(tokens, transform).toVector();
+  std::vector<absl::string_view> tokens = absl::StrSplit(input, separator, absl::SkipWhitespace());
+  std::vector<T> result;
+  result.reserve(tokens.size());
+  absl::c_transform(tokens, std::back_inserter(result), transform);
   return result;
 }
 
@@ -305,11 +314,14 @@ UType LCM(absl::flat_hash_set<UType> values) {
   return lcm;
 }
 
-template<typename T> u32 NumDigits(T x);
+template<typename T>
+u32 NumDigits(T x);
 // partial specialization optimization for 64-bit numbers
-template<> u32 NumDigits(u64 x);
+template<>
+u32 NumDigits(u64 x);
 // partial specialization optimization for 32-bit numbers
-template<> u32 NumDigits(u32 x);
+template<>
+u32 NumDigits(u32 x);
 
 struct EigenMatrixHashWrapper {
   Eigen::MatrixXi m;
