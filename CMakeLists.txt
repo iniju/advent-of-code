@@ -69,6 +69,7 @@ find_package(scn CONFIG REQUIRED)
 find_package(Eigen3 CONFIG REQUIRED)
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 find_package(re2 CONFIG REQUIRED)
+find_package(OpenMP)
 
 target_link_libraries(aoc_lib PUBLIC
         absl::btree
@@ -81,6 +82,7 @@ target_link_libraries(aoc_lib PUBLIC
         scn::scn
         Eigen3::Eigen
         re2::re2
+        OpenMP::OpenMP_CXX
 )
 
 add_executable(AoC
