@@ -45,7 +45,8 @@ namespace fmt {
 
 template<>
 auto advent<2024, 9>::solve() -> Result {
-  std::string input = GetInput();
+  std::string raw_input = GetInput();
+  auto input = absl::StripTrailingAsciiWhitespace(raw_input);
 
   Disk disk;
   disk.reserve(input.size());
@@ -94,7 +95,7 @@ auto advent<2024, 9>::solve() -> Result {
   for (u64 file_i = disk.size() - 1; file_i > 1; file_i -= 2) {
     auto &file_block = blocks[file_i].front();
     CHECK(blocks.at(file_i).size() == 1) << "This block position should only have a single block.";
-    CHECK(!file_block.free) << "This block should be file.";
+    CHECK(!file_block.free) << "Block " << file_i << " should be file.";
     // Find first free block, of any size.
     while (blocks.at(next_free).back().size == 0) {
       CHECK(blocks.at(next_free).back().free) << "This block should be free.";
