@@ -2,7 +2,8 @@
 
 namespace aoc::util {
 
-template<typename T> u32 NumDigits(T x) {
+template<typename T>
+u32 NumDigits(T x) {
   u32 digits = 0;
   while (x) {
     x /= 10;
