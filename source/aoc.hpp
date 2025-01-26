@@ -54,25 +54,29 @@ template<int YEAR, int DAY>
 struct advent {
   static constexpr int year = YEAR;
   static constexpr int day = DAY;
+
   using Result = std::tuple<std::string, std::string>;
 
-  static auto solve() -> Result;
+  auto solve() -> Result;
 
-  static void print() {
+  void print() {
+    input = GetInput();
     auto start = std::chrono::high_resolution_clock::now();
     const auto [part1, part2] = solve();
     auto end = std::chrono::high_resolution_clock::now();
     auto duration_nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-    fmt::print("{}/{:02d} -> Part 1: {:15}\tPart 2: {:15}\t\t({:0.5f} sec)\n",
+    fmt::print("{}/{:02d} -> Part 1: {:20}\tPart 2: {:20}\t\t{:>10.5f} ms\n",
                year,
                day,
                part1,
                part2,
-               (long double) duration_nanos / 1.0e9l);
+               (long double) duration_nanos / 1.0e6l);
   }
 
  private:
-  static auto GetInput(bool example = false, int example_index = 1) {
+  std::string input;
+
+  auto GetInput(bool example = false, int example_index = 1) {
     std::string path =
         fmt::format("./source/{}/{:02}/{}.txt", year, day, example ? fmt::format("example{}", example_index) : "input");
     std::ifstream f(path);

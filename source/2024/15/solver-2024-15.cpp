@@ -206,7 +206,6 @@ struct formatter<Map> : formatter<string_view> {
 
 template<>
 auto advent<2024, 15>::solve() -> Result {
-  std::string input = GetInput();
   std::vector<absl::string_view> parts = absl::StrSplit(input, "\n\n", absl::SkipWhitespace());
   Map map = aoc::util::TokenizeInput<Row>(parts.at(0), [](auto line) {
     Row row;

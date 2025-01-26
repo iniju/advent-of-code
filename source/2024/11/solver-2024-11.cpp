@@ -46,7 +46,6 @@ namespace fmt {
 
 template<>
 auto advent<2024, 11>::solve() -> Result {
-  std::string input = GetInput();
   Stones stones = aoc::util::TokenizeInput<Stone>(input, [](auto token) {
     auto result = scn::scan<u64>(token, "{}");
     CHECK(result) << "Couldn't parse '" << token << "'.";

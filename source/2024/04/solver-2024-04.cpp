@@ -24,7 +24,6 @@ namespace fmt {
 
 template<>
 auto advent<2024, 04>::solve() -> Result {
-  std::string input = GetInput();
   Grid grid = absl::StrSplit(input, "\n", absl::SkipWhitespace());
 
   u64 height = grid.size();

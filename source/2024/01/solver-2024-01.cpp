@@ -10,7 +10,6 @@ namespace fmt {
 
 template<>
 auto advent<2024, 01>::solve() -> Result {
-  std::string input = GetInput();
   std::vector<absl::string_view> lines = absl::StrSplit(input, "\n", absl::SkipWhitespace());
 
   std::vector<i32> list1, list2;

@@ -33,7 +33,6 @@ namespace fmt {
 
 template<>
 auto advent<2024, 05>::solve() -> Result {
-  std::string input = GetInput();
   std::vector<absl::string_view> parts = absl::StrSplit(input, "\n\n", absl::SkipWhitespace());
 
   Rules rules;

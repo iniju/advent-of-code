@@ -57,7 +57,6 @@ namespace fmt {
 
 template<>
 auto advent<2024, 17>::solve() -> Result {
-  std::string input = GetInput();
   std::vector<absl::string_view> lines = absl::StrSplit(input, "\n", absl::SkipWhitespace());
   CHECK(lines.size() == 4) << "Unexpected number of lines: " << lines.size();
   std::vector<u64> regs(3, 0);

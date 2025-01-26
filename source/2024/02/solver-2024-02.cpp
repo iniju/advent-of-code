@@ -25,7 +25,6 @@ namespace fmt {
 
 template<>
 auto advent<2024, 02>::solve() -> Result {
-  std::string input = GetInput();
   Reports reports = aoc::util::TokenizeInput<Report>(
       input,
       [](absl::string_view line) {

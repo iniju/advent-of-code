@@ -100,7 +100,6 @@ struct formatter<Map> : formatter<string_view> {
 
 template<>
 auto advent<2024, 16>::solve() -> Result {
-  std::string input = GetInput();
   Map map = aoc::util::TokenizeInput<Row>(input, [](auto line) {
     Row row;
     absl::c_transform(line, std::back_inserter(row), [](char ch) { return (ch == '#') ? Tile::WALL : Tile::EMPTY; });

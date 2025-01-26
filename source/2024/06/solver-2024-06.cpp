@@ -119,7 +119,6 @@ namespace fmt {
 
 template<>
 auto advent<2024, 06>::solve() -> Result {
-  std::string input = GetInput();
   Map map(input, {{'.', Tile::EMPTY}, {'^', Tile::EMPTY}, {'#', Tile::BLOCKED}}, {'^'});
   i64 guard = map.GetSpecial('^');
 

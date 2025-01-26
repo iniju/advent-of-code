@@ -37,7 +37,6 @@ namespace fmt {
 
 template<>
 auto advent<2024, 25>::solve() -> Result {
-  std::string input = GetInput();
   std::vector<absl::string_view> blocks = absl::StrSplit(input, "\n\n", absl::SkipWhitespace());
 
   Schematics keys, locks;

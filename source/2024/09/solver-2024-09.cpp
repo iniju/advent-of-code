@@ -45,14 +45,13 @@ namespace fmt {
 
 template<>
 auto advent<2024, 9>::solve() -> Result {
-  std::string raw_input = GetInput();
-  auto input = absl::StripTrailingAsciiWhitespace(raw_input);
+  auto trimmed_input = absl::StripTrailingAsciiWhitespace(input);
 
   Disk disk;
-  disk.reserve(input.size());
+  disk.reserve(trimmed_input.size());
   bool is_file = true;
   u64 id = 0;
-  for (char ch : input) {
+  for (char ch : trimmed_input) {
     disk.emplace_back(id, !is_file, ch - '0');
     id += is_file;
     is_file = !is_file;

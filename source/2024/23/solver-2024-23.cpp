@@ -67,7 +67,6 @@ namespace fmt {
 
 template<>
 auto advent<2024, 23>::solve() -> Result {
-  std::string input = GetInput();
   std::vector<absl::string_view> lines = absl::StrSplit(input, "\n", absl::SkipWhitespace());
   Connections connections;
   Computers computers;

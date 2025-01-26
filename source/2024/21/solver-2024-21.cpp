@@ -191,7 +191,6 @@ namespace fmt {
 
 template<>
 auto advent<2024, 21>::solve() -> Result {
-  std::string input = GetInput();
   auto parsing_start = std::chrono::high_resolution_clock::now();
 
   std::vector<absl::string_view> codes = absl::StrSplit(input, "\n", absl::SkipWhitespace());

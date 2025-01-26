@@ -75,7 +75,6 @@ namespace fmt {
 
 template<>
 auto advent<2024, 12>::solve() -> Result {
-  std::string input = GetInput();
   Map map = aoc::util::TokenizeInput<Row>(input, [](auto line){
     return Row{line.begin(), line.end()};
   });

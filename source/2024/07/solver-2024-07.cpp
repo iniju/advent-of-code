@@ -61,8 +61,6 @@ namespace fmt {
 
 template<>
 auto advent<2024, 07>::solve() -> Result {
-  std::string input = GetInput();
-
   Equations equations = aoc::util::TokenizeInput<Equation>(input, [](auto line) {
     std::vector<std::string> parts = absl::StrSplit(line, ": ", absl::SkipWhitespace());
     CHECK(parts.size() == 2) << "Unexpected format in '" << line << "'.";

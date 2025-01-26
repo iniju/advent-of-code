@@ -136,7 +136,6 @@ struct formatter<Op> : formatter<char> {
 
 template<>
 auto advent<2024, 24>::solve() -> Result {
-  std::string input = GetInput();
   std::vector<absl::string_view> parts = absl::StrSplit(input, "\n\n", absl::SkipWhitespace());
 
   ValMap values{};
@@ -189,7 +188,7 @@ auto advent<2024, 24>::solve() -> Result {
       invalid.insert(id);
     }
   }
-  absl::string_view part2{absl::StrJoin(invalid, ",")};
+//  absl::string_view part2{absl::StrJoin(invalid, ",")};
 
-  return aoc::result(part1, part2);
+  return aoc::result(part1, absl::StrJoin(invalid, ","));
 }

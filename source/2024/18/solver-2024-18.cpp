@@ -91,7 +91,6 @@ struct formatter<Map> : formatter<string_view> {
 
 template<>
 auto advent<2024, 18>::solve() -> Result {
-  std::string input = GetInput();
   std::vector<aoc::Pos> bytes = aoc::util::TokenizeInput<aoc::Pos>(input, [](auto line) {
     std::vector<u32> vals;
     aoc::util::ScanList(line, vals, ",");

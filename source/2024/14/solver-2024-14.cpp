@@ -59,7 +59,6 @@ namespace fmt {
 
 template<>
 auto advent<2024, 14>::solve() -> Result {
-  std::string input = GetInput();
   Robots robots = aoc::util::TokenizeInput<Robot>(input, [](auto line) {
     i64 px, py, vx, vy;
     CHECK(RE2::FullMatch(line, InputPattern, &px, &py, &vx, &vy)) << "Could not parse '" << line << "'.";

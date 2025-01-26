@@ -26,8 +26,6 @@ namespace fmt {
 
 template<>
 auto advent<2024, 03>::solve() -> Result {
-  std::string input = GetInput();
-
   // Part 1
   u64 part1 = ParseInstructions(input);
 

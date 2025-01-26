@@ -18,7 +18,6 @@ namespace fmt {
 
 template<>
 auto advent<2024, 10>::solve() -> Result {
-  std::string input = GetInput();
   std::vector<absl::string_view> lines = absl::StrSplit(input, "\n", absl::SkipWhitespace());
   u64 height = lines.size();
   u64 width = lines.at(0).size();

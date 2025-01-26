@@ -21,7 +21,6 @@ namespace fmt {
 
 template<>
 auto advent<2024, 22>::solve() -> Result {
-  std::string input = GetInput();
   std::vector<Secret> initial_secrets = aoc::util::TokenizeInput<Secret>(input, [](auto line) {
     Secret val;
     CHECK(std::from_chars(line.data(), line.data() + line.size(), val).ec == std::errc{})
