@@ -1,4 +1,6 @@
 #include <aoc.hpp>
+#include <ranges>
+#include <fast_float/fast_float.h>
 
 namespace {
 
@@ -10,35 +12,30 @@ namespace fmt {
 
 template<>
 auto advent<2024, 01>::solve() -> Result {
-  std::vector<absl::string_view> lines = absl::StrSplit(input, "\n", absl::SkipWhitespace());
-
   std::vector<i32> list1, list2;
-  for (auto line : lines) {
-    auto result = scn::scan<i32, i32>(line, "{} {}");
-    CHECK(result) << "Unable to parse input `" << line << "`.";
-    list1.push_back(std::get<0>(result->values()));
-    list2.push_back(std::get<1>(result->values()));
+  absl::flat_hash_map<i32, u64> appears;
+  i32 i;
+  for (auto line : std::ranges::split_view(input, '\n')) {
+    auto line_end = line.data() + line.size();
+    auto result = fast_float::from_chars(line.data(), line_end, i);
+    list1.push_back(i);
+    // Integers always separated by 3 spaces.
+    fast_float::from_chars(result.ptr + 3, line_end, i);
+    list2.push_back(i);
+    appears[i]++;
   }
 
   // Part 1
-  u64 dist = 0;
   absl::c_sort(list1);
   absl::c_sort(list2);
-  for (i64 i = 0; i < list1.size(); i++) {
-    dist += labs(list1.at(i) - list2.at(i));
-  }
-  u64 part1 = dist;
+  auto dist = [](auto a, auto b) { return labs(a - b); };
+  auto distances = std::views::zip_transform(dist, list1, list2);
+  u64 part1 = std::reduce(distances.cbegin(), distances.cend());
 
-  // Part 2
-  u64 similarity = 0;
-  absl::flat_hash_map<i32, u64> appears;
-  for (auto n : list2) {
-    appears[n]++;
-  }
+  u64 part2 = 0;
   for (auto n : list1) {
-    if (appears.contains(n)) similarity += static_cast<u64>(n) * appears.at(n);
+    if (appears.contains(n)) part2 += static_cast<u64>(n) * appears.at(n);
   }
-  u64 part2 = similarity;
 
   return aoc::result(part1, part2);
 }
