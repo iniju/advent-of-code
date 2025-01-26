@@ -1,18 +1,23 @@
 #include <aoc.hpp>
 
 #include <fmt/format.h>
+#include <fast_float/fast_float.h>
 
 namespace {
 
 using Report = std::vector<i32>;
 using Reports = std::vector<Report>;
 
-bool IsSafe(const Report &report) {
-  i32 init_delta = report.at(1) - report.at(0);
+inline bool IsSafe(const Report &report, u32 skip = std::numeric_limits<u32>::max()) {
+  i32 init_delta = report.at(skip <= 1 ? 2 : 1) - report.at(skip == 0 ? 1 : 0);
   if (init_delta == 0 || init_delta > 3 || init_delta < -3) return false;
-  for (i32 i = 2; i < report.size(); i++) {
-    i32 delta = report.at(i) - report.at(i - 1);
+  u32 prev = skip <= 1 ? 2 : 1;
+  i32 i = skip <= 2 ? 3 : 2;
+  while (i < report.size()) {
+    i32 delta = report.at(i) - report.at(prev);
     if (delta == 0 || delta > 3 || delta < -3 || init_delta * delta < 0) return false;
+    prev = i;
+    i += skip == i + 1 ? 2 : 1;
   }
   return true;
 }
@@ -25,37 +30,44 @@ namespace fmt {
 
 template<>
 auto advent<2024, 02>::solve() -> Result {
-  Reports reports = aoc::util::TokenizeInput<Report>(
-      input,
-      [](absl::string_view line) {
-        Report report;
-        aoc::util::ScanList(line, report);
-        return report;
-      });
+  i32 x;
+  Reports reports;
+  for (auto line : std::ranges::split_view(input, '\n')) {
+    reports.emplace_back();
+    const char *ptr = line.data();
+    auto line_end = ptr + line.size();
+    while (ptr < line_end) {
+      auto result = fast_float::from_chars(ptr, line_end, x);
+      CHECK(result.ec == std::errc()) << "Couldn't parse '" << ptr << "'.";
+      reports.back().push_back(x);
+      ptr = result.ptr + 1;
+    }
+  }
 
   // Part 1
   u64 part1 = 0;
-  for (const auto &report : reports) {
-    if (IsSafe(report)) {
+  std::vector<bool> safe(reports.size(), false);
+  for (u32 i = 0; i < reports.size(); i++) {
+    if (IsSafe(reports.at(i))) {
       part1++;
+      safe[i] = true;
     }
   }
 
   // Part 2
-  u64 part2 = 0;
-  for (const auto &report : reports) {
-    if (IsSafe(report)) {
-      part2++;
-    } else {
-      for (i32 f = 0; f < report.size(); f++) {
-        Report fixed(report.begin(), report.end());
-        fixed.erase(fixed.begin() + f);
-        if (IsSafe(fixed)) {
-          part2++;
-          break;
-        }
+  u64 part2 = part1;
+  for (u32 i = 0; i < reports.size(); i++) {
+    if (safe.at(i)) {
+      continue;
+    }
+    const auto& report  = reports.at(i);
+    for (i32 f = 0; f < report.size(); f++) {
+      if (IsSafe(report, f)) {
+        part2++;
+        break;
       }
     }
+
   }
 
   return aoc::result(part1, part2);
