@@ -5,15 +5,13 @@
 namespace {
 
 using Grid = std::vector<absl::string_view>;
-std::string goal1 = "XMAS";
-std::string goal2 = "MAS";
 
-bool FindWord(const Grid &grid, absl::string_view word, i64 i, i64 j, aoc::Dir8 dir) {
-  auto move = aoc::MoveDir8(dir);
-  for (i64 s = 0; s < word.size(); s++) {
-    if (word[s] != grid[i + s * move.i][j + s * move.j]) return false;
-  }
-  return true;
+inline bool FindWordXMAS(const Grid &grid, i64 i, i64 j, i64 di, i64 dj) {
+  return grid[i][j] == 'X' && grid[i + di][j + dj] == 'M' && grid[i + 2 * di][j + 2 * dj] == 'A'
+      && grid[i + 3 * di][j + 3 * dj] == 'S';
+}
+inline bool FindWordMAS(const Grid &grid, i64 mi, i64 mj, i64 si, i64 sj) {
+  return grid[mi][mj] == 'M' && grid[si][sj] == 'S';
 }
 
 }  // namespace
@@ -24,7 +22,7 @@ namespace fmt {
 
 template<>
 auto advent<2024, 04>::solve() -> Result {
-  Grid grid = absl::StrSplit(input, "\n", absl::SkipWhitespace());
+  Grid grid = absl::StrSplit(input, '\n');
 
   u64 height = grid.size();
   u64 width = grid.at(0).size();
@@ -38,21 +36,21 @@ auto advent<2024, 04>::solve() -> Result {
         i64 fi = i + 3 * move.i;
         i64 fj = j + 3 * move.j;
         if (fi < 0 || fi >= height || fj < 0 || fj >= width) continue;
-        if (FindWord(grid, goal1, i, j, d)) part1++;
+        if (FindWordXMAS(grid, i, j, move.i, move.j)) part1++;
       }
     }
   }
 
   // Part 2
   u64 part2 = 0;
-  for (i64 i = 0; i < height - 2; i++) {
-    for (i64 j = 0; j < width - 2; j++) {
-      // Early exit if central spot is not an 'A'.
-      if (grid.at(i + 1).at(j + 1) != goal2.at(1)) continue;
-      if ((FindWord(grid, goal2, i, j, aoc::Dir8::SE) || FindWord(grid, goal2, i + 2, j + 2, aoc::Dir8::NW)) &&
-          (FindWord(grid, goal2, i, j + 2, aoc::Dir8::SW) || FindWord(grid, goal2, i + 2, j, aoc::Dir8::NE))) {
+  for (i64 i = 1; i < height - 1; i++) {
+    size_t j = grid.at(i).find_first_of('A', 1);
+    while (j < grid.at(i).size() - 1) {
+      if ((FindWordMAS(grid, i - 1, j - 1, i + 1, j + 1) || FindWordMAS(grid, i + 1, j + 1, i - 1, j - 1)) &&
+          (FindWordMAS(grid, i - 1, j + 1, i + 1, j - 1) || FindWordMAS(grid, i + 1, j - 1, i - 1, j + 1))) {
         part2++;
       }
+      j = grid.at(i).find_first_of('A', j + 1);
     }
   }
   return aoc::result(part1, part2);
