@@ -1,21 +1,34 @@
 #include <aoc.hpp>
 
-#include <fmt/format.h>
+#include <fast_float/fast_float.h>
 #include <re2/re2.h>
 
 namespace {
 
-RE2 InstructionPattern(R"(mul\((\d+),(\d+)\))");
-RE2 DisabledSectionPattern(R"((?s)don't\(\).*?do\(\))");
-RE2 FinalDisabledSectionPattern(R"((?s)don't\(\).*$)");
+RE2 InstructionPattern(R"(((?:mul\([\d,]+\)|do\(\)|don't\(\))))");
 
-i64 ParseInstructions(absl::string_view input) {
-  i64 result = 0;
-  i64 x, y;
-  while (RE2::FindAndConsume(&input, InstructionPattern, &x, &y)) {
-    result += x * y;
+std::tuple<i64, i64> ParseInstructions(absl::string_view input) {
+  i64 part1 = 0;
+  i64 part2 = 0;
+  absl::string_view instruction;
+  bool skip = false;
+  while (RE2::FindAndConsume(&input, InstructionPattern, &instruction)) {
+    char ch = instruction.at(2);
+    if (ch != 'l') {  // Handle do()s and don't()s.
+      skip = ch == 'n';
+      continue;
+    }
+    i64 x, y;
+    auto line_end = instruction.data() + instruction.size();
+    // Skip the "mul(" part.
+    auto ret = fast_float::from_chars(instruction.data() + 4, line_end, x);
+    // Skip the comma.
+    fast_float::from_chars(ret.ptr + 1, line_end, y);
+    i64 value = x * y;
+    part1 += value;
+    if (!skip) part2 += value;
   }
-  return result;
+  return std::make_tuple(part1, part2);
 }
 
 }  // namespace
@@ -26,14 +39,8 @@ namespace fmt {
 
 template<>
 auto advent<2024, 03>::solve() -> Result {
-  // Part 1
-  u64 part1 = ParseInstructions(input);
-
-  // Part 2
-  std::string fixed_input(input);
-  while(RE2::GlobalReplace(&fixed_input, DisabledSectionPattern, "do()"));
-  CHECK(RE2::Replace(&fixed_input, FinalDisabledSectionPattern, ""));
-  u64 part2 = ParseInstructions(fixed_input);
+  // Part 1 & 2
+  auto [part1, part2] = ParseInstructions(input);
 
   return aoc::result(part1, part2);
 }
