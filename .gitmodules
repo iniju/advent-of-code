@@ -1,0 +1,21 @@
+[submodule "deps/abseil-cpp"]
+	path = deps/abseil-cpp
+	url = https://github.com/abseil/abseil-cpp
+[submodule "deps/fmt"]
+	path = deps/fmt
+	url = https://github.com/fmtlib/fmt.git
+[submodule "deps/scnlib"]
+	path = deps/scnlib
+	url = https://github.com/eliaskosunen/scnlib.git
+[submodule "deps/re2"]
+	path = deps/re2
+	url = https://github.com/google/re2.git
+[submodule "deps/eigen"]
+	path = deps/eigen
+	url = https://gitlab.com/libeigen/eigen.git
+[submodule "deps/fast_float"]
+	path = deps/fast_float
+	url = https://github.com/fastfloat/fast_float.git
+[submodule "deps/cpp-lazy"]
+	path = deps/cpp-lazy
+	url = https://github.com/Kaaserne/cpp-lazy.git
