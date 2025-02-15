@@ -43,6 +43,22 @@ auto advent<2024, 02>::solve() -> Result {
       ptr = result.ptr + 1;
     }
   }
+//  std::ranges::copy(
+//      input | std::views::split('\n') | std::views::transform([](auto line) -> Report {
+//        Report report;
+//        i32 x;
+//        const char *ptr = line.data();
+//        auto line_end = ptr + line.size();
+//        while (ptr < line_end) {
+//          auto result = fast_float::from_chars(ptr, line_end, x);
+//          CHECK(result.ec == std::errc()) << "Couldn't parse '" << ptr << "'.";
+//          report.push_back(x);
+//          ptr = result.ptr + 1;
+//        }
+//        return report;
+//      }),
+//      reports.begin()
+//  );
 
   // Part 1
   u64 part1 = 0;
@@ -60,7 +76,7 @@ auto advent<2024, 02>::solve() -> Result {
     if (safe.at(i)) {
       continue;
     }
-    const auto& report  = reports.at(i);
+    const auto &report = reports.at(i);
     for (i32 f = 0; f < report.size(); f++) {
       if (IsSafe(report, f)) {
         part2++;

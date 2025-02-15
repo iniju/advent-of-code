@@ -63,15 +63,17 @@ target_include_directories(aoc_lib PUBLIC
         "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/source>"
 )
 
+set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+set(ABSL_ENABLE_INSTALL ON)
 add_subdirectory(deps/abseil-cpp)
+add_subdirectory(deps/re2)
 add_compile_definitions(FMT_EXCEPTIONS=0)
 add_subdirectory(deps/fmt)
 set(CPP-LAZY_USE_STANDALONE TRUE)
 add_subdirectory(deps/cpp-lazy)
 add_subdirectory(deps/eigen)
-set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 # re2 cmake instructions are in deps/CMakeLists.txt
-add_subdirectory(deps)
+#add_subdirectory(deps)
 add_subdirectory(deps/scnlib)
 find_package(OpenMP)
 

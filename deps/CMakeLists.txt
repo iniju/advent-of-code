@@ -42,6 +42,7 @@ target_link_libraries(re2 PUBLIC
         absl::flat_hash_map
         absl::flat_hash_set
         absl::inlined_vector
+        absl::log
         absl::optional
         absl::span
         absl::str_format
