@@ -2,5 +2,12 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/deps/abseil-cpp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/deps/cpp-lazy" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/deps/eigen" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/deps/fast_float" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/deps/fmt" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/deps/re2" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/deps/scnlib" vcs="Git" />
   </component>
 </project>
