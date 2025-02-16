@@ -78,15 +78,14 @@ struct advent {
 
   auto GetInput(bool example = false, int example_index = 1) {
     std::string path =
-        fmt::format("./source/{}/{:02}/{}.txt", year, day, example ? fmt::format("example{}", example_index) : "input");
+        fmt::format("../../source/{}/{:02}/{}.txt", year, day, example ? fmt::format("example{}", example_index) : "input");
     std::ifstream f(path);
-    if (f.is_open()) {
-      std::stringstream ss;
-      ss << f.rdbuf();
-      return ss.str();
-    }
-    CHECK(false) << fmt::format("Could not open path {}\n", path) << std::endl;
-    std::terminate();
+    CHECK(f.is_open()) << fmt::format("Could not open path {}\n", path) << std::endl;
+    std::stringstream ss;
+    ss << f.rdbuf();
+    std::string result = ss.str();
+    result = absl::StripTrailingAsciiWhitespace(result);
+    return result;
   }
 };
 
