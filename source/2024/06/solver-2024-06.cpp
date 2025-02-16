@@ -105,7 +105,8 @@ u64 WalkMapWithLoops(Map &map, const Visited &visited) {
   }
   u64 result = 0;
   #pragma omp parallel for reduction(+:result)
-  for (auto const& [pos, block, vis_i, dir] : possible) {
+  for (i32 i = 0; i < possible.size(); i++) {
+    auto const& [pos, block, vis_i, dir] = possible[i];
     if (DetectLoop(map, pos, visited, vis_i, dir, block)) result++;
   }
   return result;
