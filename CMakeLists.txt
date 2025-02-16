@@ -1,9 +1,8 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.9)
 project(AoC)
 
 set(CMAKE_BUILD_FLAGS "-O3 -PARALLEL")
 set(CMAKE_CXX_STANDARD 23)
-set(SCN_REGEX_BACKEND "re2")
 
 add_library(aoc_lib OBJECT
 #        source/2020/01/solver-2020-01.cpp
@@ -72,10 +71,9 @@ add_subdirectory(deps/fmt)
 set(CPP-LAZY_USE_STANDALONE TRUE)
 add_subdirectory(deps/cpp-lazy)
 add_subdirectory(deps/eigen)
-# re2 cmake instructions are in deps/CMakeLists.txt
-#add_subdirectory(deps)
+set(SCN_REGEX_BACKEND "re2")
 add_subdirectory(deps/scnlib)
-find_package(OpenMP)
+find_package(OpenMP REQUIRED)
 
 target_link_libraries(aoc_lib PUBLIC
         absl::btree
