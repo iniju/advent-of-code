@@ -247,3 +247,7 @@ auto advent<2024, 15>::solve() -> Result {
 
   return aoc::result(part1, part2);
 }
+
+template<> auto advent<2024, 15>::PartOne() -> std::string { return "1515788"; }
+
+template<> auto advent<2024, 15>::PartTwo() -> std::string { return "1516544"; }

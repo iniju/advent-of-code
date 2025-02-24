@@ -129,3 +129,7 @@ auto advent<2024, 18>::solve() -> Result {
 
   return aoc::result(part1, part2);
 }
+
+template<> auto advent<2024, 18>::PartOne() -> std::string { return "404"; }
+
+template<> auto advent<2024, 18>::PartTwo() -> std::string { return "27,60"; }

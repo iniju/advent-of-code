@@ -3,8 +3,11 @@ project(AoC)
 
 set(CMAKE_BUILD_FLAGS "-O3 -PARALLEL")
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_library(aoc_lib OBJECT
+        source/aoc.cpp
+        source/aoc.hpp
 #        source/2020/01/solver-2020-01.cpp
 #        source/2023/01/solver-2023-01.cpp
 #        source/2023/02/solver-2023-02.cpp
@@ -42,20 +45,20 @@ add_library(aoc_lib OBJECT
         source/2024/09/solver-2024-09.cpp
         source/2024/10/solver-2024-10.cpp
         source/2024/11/solver-2024-11.cpp
-#        source/2024/12/solver-2024-12.cpp
-#        source/2024/13/solver-2024-13.cpp
-#        source/2024/14/solver-2024-14.cpp
-#        source/2024/15/solver-2024-15.cpp
-#        source/2024/16/solver-2024-16.cpp
-#        source/2024/17/solver-2024-17.cpp
-#        source/2024/18/solver-2024-18.cpp
-#        source/2024/19/solver-2024-19.cpp
-#        source/2024/20/solver-2024-20.cpp
-#        source/2024/21/solver-2024-21.cpp
-#        source/2024/22/solver-2024-22.cpp
-#        source/2024/23/solver-2024-23.cpp
-#        source/2024/24/solver-2024-24.cpp
-#        source/2024/25/solver-2024-25.cpp
+        source/2024/12/solver-2024-12.cpp
+        source/2024/13/solver-2024-13.cpp
+        source/2024/14/solver-2024-14.cpp
+        source/2024/15/solver-2024-15.cpp
+        source/2024/16/solver-2024-16.cpp
+        source/2024/17/solver-2024-17.cpp
+        source/2024/18/solver-2024-18.cpp
+        source/2024/19/solver-2024-19.cpp
+        source/2024/20/solver-2024-20.cpp
+        source/2024/21/solver-2024-21.cpp
+        source/2024/22/solver-2024-22.cpp
+        source/2024/23/solver-2024-23.cpp
+        source/2024/24/solver-2024-24.cpp
+        source/2024/25/solver-2024-25.cpp
 )
 
 target_include_directories(aoc_lib PUBLIC
@@ -90,9 +93,7 @@ target_link_libraries(aoc_lib PUBLIC
         OpenMP::OpenMP_CXX
 )
 
-add_executable(AoC
-        source/main.cpp
-        source/aoc.hpp
-        source/aoc.cpp
-)
+add_executable(AoC main.cpp)
 target_link_libraries(AoC PRIVATE aoc_lib)
+
+add_subdirectory(aoc_tests)

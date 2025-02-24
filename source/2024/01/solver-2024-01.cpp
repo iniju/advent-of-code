@@ -11,7 +11,7 @@ namespace fmt {
 }  // namespace fmt
 
 template<>
-auto advent<2024, 01>::solve() -> Result {
+auto advent<2024, 1>::solve() -> Result {
   std::vector<i32> list1, list2;
   absl::flat_hash_map<i32, u64> appears;
   i32 i;
@@ -39,3 +39,7 @@ auto advent<2024, 01>::solve() -> Result {
 
   return aoc::result(part1, part2);
 }
+
+template<> auto advent<2024, 1>::PartOne() -> std::string { return "1189304"; }
+
+template<> auto advent<2024, 1>::PartTwo() -> std::string { return "24349736"; }

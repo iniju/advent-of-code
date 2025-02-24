@@ -60,7 +60,7 @@ namespace fmt {
 }  // namespace fmt
 
 template<>
-auto advent<2024, 07>::solve() -> Result {
+auto advent<2024, 7>::solve() -> Result {
   Equations equations = aoc::util::TokenizeInput<Equation>(input, [](auto line) {
     std::vector<std::string> parts = absl::StrSplit(line, ": ", absl::SkipWhitespace());
     CHECK(parts.size() == 2) << "Unexpected format in '" << line << "'.";
@@ -89,3 +89,7 @@ auto advent<2024, 07>::solve() -> Result {
 
   return aoc::result(part1, part2);
 }
+
+template<> auto advent<2024, 7>::PartOne() -> std::string { return "14711933466277"; }
+
+template<> auto advent<2024, 7>::PartTwo() -> std::string { return "286580387663654"; }

@@ -192,3 +192,7 @@ auto advent<2024, 24>::solve() -> Result {
 
   return aoc::result(part1, absl::StrJoin(invalid, ","));
 }
+
+template<> auto advent<2024, 24>::PartOne() -> std::string { return "57632654722854"; }
+
+template<> auto advent<2024, 24>::PartTwo() -> std::string { return "ckj,dbp,fdv,kdf,rpp,z15,z23,z39"; }

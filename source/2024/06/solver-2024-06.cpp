@@ -119,7 +119,7 @@ namespace fmt {
 }  // namespace fmt
 
 template<>
-auto advent<2024, 06>::solve() -> Result {
+auto advent<2024, 6>::solve() -> Result {
   Map map(input, {{'.', Tile::EMPTY}, {'^', Tile::EMPTY}, {'#', Tile::BLOCKED}}, {'^'});
   i64 guard = map.GetSpecial('^');
 
@@ -131,3 +131,7 @@ auto advent<2024, 06>::solve() -> Result {
 
   return aoc::result(part1, part2);
 }
+
+template<> auto advent<2024, 6>::PartOne() -> std::string { return "5329"; }
+
+template<> auto advent<2024, 6>::PartTwo() -> std::string { return "2162"; }

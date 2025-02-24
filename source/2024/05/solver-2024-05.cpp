@@ -32,7 +32,7 @@ namespace fmt {
 }  // namespace fmt
 
 template<>
-auto advent<2024, 05>::solve() -> Result {
+auto advent<2024, 5>::solve() -> Result {
   std::vector<absl::string_view> parts = absl::StrSplit(input, "\n\n", absl::SkipWhitespace());
 
   Rules rules;
@@ -77,3 +77,7 @@ auto advent<2024, 05>::solve() -> Result {
 
   return aoc::result(part1, part2);
 }
+
+template<> auto advent<2024, 5>::PartOne() -> std::string { return "7198"; }
+
+template<> auto advent<2024, 5>::PartTwo() -> std::string { return "4230"; }

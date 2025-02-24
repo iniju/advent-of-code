@@ -57,10 +57,13 @@ struct advent {
 
   using Result = std::tuple<std::string, std::string>;
 
-  auto solve() -> Result;
+  Result DoSolve() {
+    GetInput();
+    return solve();
+  }
 
   void print() {
-    input = GetInput();
+    GetInput();
     auto start = std::chrono::high_resolution_clock::now();
     const auto [part1, part2] = solve();
     auto end = std::chrono::high_resolution_clock::now();
@@ -73,10 +76,16 @@ struct advent {
                (long double) duration_nanos / 1.0e6l);
   }
 
+  auto PartOne() -> std::string;
+
+  auto PartTwo() -> std::string;
+
  private:
   std::string input;
 
-  auto GetInput(bool example = false, int example_index = 1) {
+  auto solve() -> Result;
+
+  void GetInput(bool example = false, int example_index = 1) {
     std::string path =
         fmt::format("./source/{}/{:02}/{}.txt", year, day, example ? fmt::format("example{}", example_index) : "input");
     std::ifstream f(path);
@@ -85,7 +94,7 @@ struct advent {
     ss << f.rdbuf();
     std::string result = ss.str();
     result = absl::StripTrailingAsciiWhitespace(result);
-    return result;
+    input = result;
   }
 };
 
@@ -388,4 +397,4 @@ struct formatter<aoc::Pos> : formatter<string_view> {
 
 }  // namespace fmt
 
-#endif //ADVENTOFCODE_AOC_HPP
+#endif // ADVENTOFCODE_AOC_HPP
