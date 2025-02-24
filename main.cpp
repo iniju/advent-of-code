@@ -1,4 +1,4 @@
-#include "source/aoc.hpp"
+#include "aoc_lib/aoc.hpp"
 
 auto main() -> int {
   constexpr int YEAR{2024};
