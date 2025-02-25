@@ -1,7 +1,6 @@
 #include <aoc.hpp>
 
 #include <fmt/format.h>
-#include <fast_float/fast_float.h>
 
 namespace {
 

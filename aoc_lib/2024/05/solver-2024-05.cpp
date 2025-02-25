@@ -33,24 +33,38 @@ namespace fmt {
 
 template<>
 auto advent<2024, 5>::solve() -> Result {
-  std::vector<absl::string_view> parts = absl::StrSplit(input, "\n\n", absl::SkipWhitespace());
+  // std::vector<absl::string_view> parts = absl::StrSplit(input, "\n\n", absl::SkipWhitespace());
 
   Rules rules;
-  for (auto line : absl::StrSplit(parts[0], "\n", absl::SkipWhitespace())) {
-    auto result = scn::scan<u32, u32>(line, "{}|{}");
-    CHECK(result) << "Could parse line '"<< line <<"'.";
-    rules[std::get<0>(result->values())].insert(std::get<1>(result->values()));
-  }
-  PageSets page_sets = aoc::util::TokenizeInput<Pages>(parts[1], [](auto line){
+  PageSets page_sets;
+  bool rules_done = false;
+  for (auto line : std::ranges::split_view(input, '\n')) {
+    if (line.empty()) {
+      if (!rules_done) {
+        rules_done = true;
+        continue;
+      }
+      break;
+    }
+  // for (auto line : absl::StrSplit(parts[0], "\n", absl::SkipWhitespace())) {
+    if (!rules_done) {
+      // auto result = scn::scan<u32, u32>(line, "{}|{}");
+      std::vector<u32> result;
+      aoc::util::FastScanList(line.data(), result);
+      // CHECK(result) << "Could not parse line '"<< line <<"'.";
+      rules[result[0]].insert(result[1]);
+      continue;
+    }
+  // PageSets page_sets = aoc::util::TokenizeInput<Pages>(parts[1], [](auto line){
     Pages pages;
 //    absl::c_transform(absl::StrSplit(line, ","), std::back_inserter(pages), [](auto token) {
 //      auto result = scn::scan<u32>(token, "{}");
 //      CHECK(result) << "Can't parse token '" <<token << "'.";
 //      return result->value();
 //    });
-    aoc::util::ScanList(line, pages, ",");
-    return pages;
-  });
+    aoc::util::FastScanList(line.data(), pages);
+    page_sets.emplace_back(pages.begin(), pages.end());
+  }
 
   // Parts 1 & 2
   u64 part1 = 0;

@@ -13,7 +13,8 @@ TYPED_TEST_P(AoCTests, ValidateAnswersTest) {
     static constexpr std::size_t year = TypeParam::first_type::value;
     static constexpr std::size_t day = TypeParam::second_type::value;
     advent<year, day> adv;
-    const auto result = adv.DoSolve();
+    adv.GetInput();
+    const auto result = adv.solve();
     EXPECT_EQ(std::get<0>(result), adv.PartOne());
     EXPECT_EQ(std::get<1>(result), adv.PartTwo());
 }

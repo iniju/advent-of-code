@@ -57,9 +57,16 @@ struct advent {
 
   using Result = std::tuple<std::string, std::string>;
 
-  Result DoSolve() {
-    GetInput();
-    return solve();
+  void GetInput(bool example = false, int example_index = 1) {
+    std::string path =
+        fmt::format("./aoc_lib/{}/{:02}/{}.txt", year, day, example ? fmt::format("example{}", example_index) : "input");
+    std::ifstream f(path);
+    CHECK(f.is_open()) << fmt::format("Could not open path {}\n", path) << std::endl;
+    std::stringstream ss;
+    ss << f.rdbuf();
+    std::string result = ss.str();
+    result = absl::StripTrailingAsciiWhitespace(result);
+    input = result;
   }
 
   void print() {
@@ -76,26 +83,14 @@ struct advent {
                (long double) duration_nanos / 1.0e6l);
   }
 
+  auto solve() -> Result;
+
   auto PartOne() -> std::string;
 
   auto PartTwo() -> std::string;
 
  private:
   std::string input;
-
-  auto solve() -> Result;
-
-  void GetInput(bool example = false, int example_index = 1) {
-    std::string path =
-        fmt::format("./aoc_lib/{}/{:02}/{}.txt", year, day, example ? fmt::format("example{}", example_index) : "input");
-    std::ifstream f(path);
-    CHECK(f.is_open()) << fmt::format("Could not open path {}\n", path) << std::endl;
-    std::stringstream ss;
-    ss << f.rdbuf();
-    std::string result = ss.str();
-    result = absl::StripTrailingAsciiWhitespace(result);
-    input = result;
-  }
 };
 
 namespace aoc {

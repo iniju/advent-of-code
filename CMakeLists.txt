@@ -96,4 +96,5 @@ target_link_libraries(aoc_lib PUBLIC
 add_executable(AoC main.cpp)
 target_link_libraries(AoC PRIVATE aoc_lib)
 
+add_subdirectory(aoc_benchmarks)
 add_subdirectory(aoc_tests)
