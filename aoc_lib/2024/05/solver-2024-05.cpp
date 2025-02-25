@@ -43,12 +43,12 @@ auto advent<2024, 5>::solve() -> Result {
     }
     if (!rules_done) {
       std::vector<u32> result;
-      aoc::util::FastScanList(line, "|", result);
+      aoc::util::FastScanList(line, result, "|");
       rules[result[0]].insert(result[1]);
       continue;
     }
     Pages pages;
-    aoc::util::FastScanList(line, ",", pages);
+    aoc::util::FastScanList(line, pages, ",");
     page_sets.emplace_back(pages.begin(), pages.end());
   }
 
@@ -58,9 +58,9 @@ auto advent<2024, 5>::solve() -> Result {
   for (const auto& pages : page_sets) {
     bool correct = true;
     for (u32 i = 0; i < pages.size() - 1; i++) {
-      u32 page = pages.at(i);
+      u32 page = pages[i];
       for (u32 j = i + 1; j < pages.size(); j++) {
-        u32 following = pages.at(j);
+        u32 following = pages[j];
         if (rules[following].contains(page)) {
           correct = false;
           break;
@@ -69,7 +69,7 @@ auto advent<2024, 5>::solve() -> Result {
       if (!correct) break;
     }
     if (correct) {
-      part1 += pages.at(pages.size() / 2);
+      part1 += pages[pages.size() / 2];
     } else {
       part2 += FixPages(pages, rules);
     }

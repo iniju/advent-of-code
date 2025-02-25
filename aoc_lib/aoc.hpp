@@ -245,20 +245,20 @@ void ScanList(absl::string_view input, std::vector<T> &list, absl::string_view s
     return result->value();
   });
 }
-// template<typename T>
-// void FastScanList2(std::ranges::subrange<std::string::iterator> input, std::vector<T> &list) {
-//   auto ptr = std::ranges::data(input);
-//   auto line_end = ptr + std::ranges::size(input);
-//   T x;
-//   while (ptr < line_end) {
-//     auto result = fast_float::from_chars(ptr, line_end, x);
-//     CHECK(result.ec == std::errc()) << "Couldn't parse '" << ptr << "'.";
-//     list.push_back(x);
-//     ptr = const_cast<char*>(result.ptr) + 1;
-//   }
-// }
 template<typename T>
-void FastScanList(std::ranges::subrange<std::string::iterator> input, std::string_view delimiter, std::vector<T> &list) {
+void FasterScanList(std::ranges::subrange<std::string::iterator> input, std::vector<T> &list, const u32 skip = 1) {
+  auto ptr = std::ranges::data(input);
+  auto line_end = ptr + std::ranges::size(input);
+  T x;
+  while (ptr < line_end) {
+    auto result = fast_float::from_chars(ptr, line_end, x);
+    CHECK(result.ec == std::errc()) << "Couldn't parse '" << ptr << "'.";
+    list.push_back(x);
+    ptr = const_cast<char*>(result.ptr) + skip;
+  }
+}
+template<typename T>
+void FastScanList(std::ranges::subrange<std::string::iterator> input, std::vector<T> &list, std::string_view delimiter = " ") {
   for (auto subrange : input | std::views::split(delimiter)) {
     T x;
     auto result = fast_float::from_chars(

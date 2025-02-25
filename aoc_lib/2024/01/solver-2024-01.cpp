@@ -1,6 +1,4 @@
 #include <aoc.hpp>
-#include <ranges>
-#include <fast_float/fast_float.h>
 
 namespace {
 
@@ -15,12 +13,13 @@ auto advent<2024, 1>::solve() -> Result {
   std::vector<i32> list1, list2;
   absl::flat_hash_map<i32, u64> appears;
   i32 i;
-  for (auto line : std::ranges::split_view(input, '\n')) {
-    auto line_end = line.data() + line.size();
-    auto result = fast_float::from_chars(line.data(), line_end, i);
+  for (auto line : input | std::views::split('\n')) {
+    const auto line_start = std::ranges::data(line);
+    const auto line_end = line_start + std::ranges::size(line);
+    auto [ptr, _] = fast_float::from_chars(line_start, line_end, i);
     list1.push_back(i);
     // Integers always separated by 3 spaces.
-    fast_float::from_chars(result.ptr + 3, line_end, i);
+    fast_float::from_chars(ptr + 3, line_end, i);
     list2.push_back(i);
     appears[i]++;
   }
@@ -34,7 +33,7 @@ auto advent<2024, 1>::solve() -> Result {
 
   u64 part2 = 0;
   for (auto n : list1) {
-    if (appears.contains(n)) part2 += static_cast<u64>(n) * appears.at(n);
+    if (appears.contains(n)) part2 += static_cast<u64>(n) * appears[n];
   }
 
   return aoc::result(part1, part2);
