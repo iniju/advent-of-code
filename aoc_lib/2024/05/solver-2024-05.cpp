@@ -1,28 +1,28 @@
 #include <aoc.hpp>
 
-#include <absl/container/btree_map.h>
-#include <absl/container/btree_set.h>
-#include <fmt/format.h>
-
 namespace {
 
-using Rules = absl::btree_map<u32, absl::btree_set<u32>>;
+using Rules = absl::flat_hash_map<u32, absl::flat_hash_set<u32>>;
 using Pages = std::vector<u32>;
 using PageSets = std::vector<Pages>;
 
+
 u32 FixPages(const Pages& pages, const Rules& rules) {
-  absl::flat_hash_map<u32, u32> following_pages_num;
-  absl::btree_set<u32> all_pages(pages.begin(), pages.end());
+  const auto goal = pages.size() / 2;
   for (u32 page : pages) {
-    Pages following_pages;
-    absl::c_set_intersection(all_pages, rules.at(page), std::back_inserter(following_pages));
-    following_pages_num[page] = following_pages.size();
+    u32 found_rules = 0;
+    for (u32 other_page : pages) {
+      if (page == other_page) continue;
+      if (rules.at(page).contains(other_page)) {
+        found_rules++;
+      }
+    }
+    if (found_rules == goal) {
+      return page;
+    }
   }
-  Pages sorted(all_pages.begin(), all_pages.end());
-  absl::c_sort(sorted, [&following_pages_num](u32 l, u32 r) {
-    return following_pages_num.at(l) > following_pages_num.at(r);
-  });
-  return sorted.at(sorted.size()/2);
+  CHECK(false) << "Should never happen.";
+  return 0;
 }
 
 }  // namespace
@@ -33,36 +33,22 @@ namespace fmt {
 
 template<>
 auto advent<2024, 5>::solve() -> Result {
-  // std::vector<absl::string_view> parts = absl::StrSplit(input, "\n\n", absl::SkipWhitespace());
-
   Rules rules;
   PageSets page_sets;
   bool rules_done = false;
-  for (auto line : std::ranges::split_view(input, '\n')) {
+  for (auto line : input | std::views::split('\n')) {
     if (line.empty()) {
-      if (!rules_done) {
-        rules_done = true;
-        continue;
-      }
-      break;
+      rules_done = true;
+      continue;
     }
-  // for (auto line : absl::StrSplit(parts[0], "\n", absl::SkipWhitespace())) {
     if (!rules_done) {
-      // auto result = scn::scan<u32, u32>(line, "{}|{}");
       std::vector<u32> result;
-      aoc::util::FastScanList(line.data(), result);
-      // CHECK(result) << "Could not parse line '"<< line <<"'.";
+      aoc::util::FastScanList(line, "|", result);
       rules[result[0]].insert(result[1]);
       continue;
     }
-  // PageSets page_sets = aoc::util::TokenizeInput<Pages>(parts[1], [](auto line){
     Pages pages;
-//    absl::c_transform(absl::StrSplit(line, ","), std::back_inserter(pages), [](auto token) {
-//      auto result = scn::scan<u32>(token, "{}");
-//      CHECK(result) << "Can't parse token '" <<token << "'.";
-//      return result->value();
-//    });
-    aoc::util::FastScanList(line.data(), pages);
+    aoc::util::FastScanList(line, ",", pages);
     page_sets.emplace_back(pages.begin(), pages.end());
   }
 
