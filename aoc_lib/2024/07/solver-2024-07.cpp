@@ -1,56 +1,24 @@
 #include <aoc.hpp>
 
-#include <fmt/format.h>
-
 namespace {
 
-using Operands = std::vector<u64>;
-using Equation = std::pair<u64, Operands>;
+using Operand = u64;
+using Operands = std::vector<Operand>;
+using Equation = std::pair<Operand, Operands>;
 using Equations = std::vector<Equation>;
 
-enum class Op : u16 {
-  ADD, MUL, CONCAT
-};
+bool IsValid(const Operand goal, const Operands &operands, const u16 operand_i, const bool use_concat) {
+  const auto operand = operands[operand_i];
+  if (operand_i == 0) return goal == operand;
 
-u64 ApplyOp(u64 left, u64 right, Op op) {
-  switch (op) {
-    case Op::ADD: return left + right;
-    case Op::MUL: return left * right;
-    case Op::CONCAT: {
-      u32 tens = aoc::util::NumDigits(right);
-      return left * aoc::kTenPowers[tens] + right;
-    }
-  }
-}
-
-std::pair<bool, u64> IsValid(u64 goal, u64 cur, const Operands &operands, u16 operand_i, bool use_concat) {
-  if (cur > goal) return std::make_pair(false, 0);
-  if (operand_i == operands.size() - 1) {
-    u64 result = ApplyOp(cur, operands.at(operand_i), Op::ADD);
-    if (goal == result) return std::make_pair(true, result);
-    result = ApplyOp(cur, operands.at(operand_i), Op::MUL);
-    if (goal == result) return std::make_pair(true, result);
-    if (use_concat) {
-      result = ApplyOp(cur, operands.at(operand_i), Op::CONCAT);
-      if (goal == result) return std::make_pair(true, result);
-    }
-    return std::make_pair(false, 0);
-  }
-  auto result = IsValid(goal, ApplyOp(cur, operands.at(operand_i), Op::ADD), operands, operand_i + 1, use_concat);
-  if (result.first)
-    return
-        result;
-  result = IsValid(goal, ApplyOp(cur, operands.at(operand_i), Op::MUL), operands, operand_i + 1, use_concat);
-  if (result.first)
-    return
-        result;
+  const auto [q, r] = std::div(static_cast<i64>(goal), static_cast<i64>(operand));
+  if (r == 0 && IsValid(q, operands, operand_i - 1, use_concat)) return true;
   if (use_concat) {
-    result = IsValid(goal, ApplyOp(cur, operands.at(operand_i), Op::CONCAT), operands, operand_i + 1, use_concat);
-    if (result.first)
-      return
-          result;
+    const auto tens = aoc::kTenPowers[aoc::util::NumDigits(operand)];
+    if ((goal - operand) % tens == 0 && IsValid(goal / tens, operands, operand_i - 1, use_concat)) return true;
   }
-  return std::make_pair(false, 0);
+  if (IsValid(goal - operand, operands, operand_i - 1, use_concat)) return true;
+  return false;
 }
 
 }  // namespace
@@ -61,31 +29,30 @@ namespace fmt {
 
 template<>
 auto advent<2024, 7>::solve() -> Result {
-  Equations equations = aoc::util::TokenizeInput<Equation>(input, [](auto line) {
-    std::vector<std::string> parts = absl::StrSplit(line, ": ", absl::SkipWhitespace());
-    CHECK(parts.size() == 2) << "Unexpected format in '" << line << "'.";
+  Equations equations;
+  for (auto line : input | std::views::split('\n')) {
     Equation equation;
-    auto result = scn::scan<u64>(parts[0], "{}");
-    CHECK(result) << "Unable to parse result from '" << parts[0] << "'.";
-    equation.first = result->value();
-    aoc::util::ScanList(parts[1], equation.second);
-    return equation;
-  });
-
-  // Part 1
-  u64 part1 = 0;
-  Equations invalid_equations;
-  for (const auto &equation : equations) {
-    auto [valid, result] = IsValid(equation.first, equation.second.at(0), equation.second, 1, false);
-    if (valid) part1 += result; else invalid_equations.push_back(equation);
+    auto line_split_view = line | std::views::split(':');
+    auto parts_it = line_split_view.begin();
+    const auto start = std::ranges::data(*parts_it);
+    auto [_, ec] = std::from_chars(start, start + std::ranges::size(*parts_it), equation.first);
+    CHECK(ec == std::errc()) << "Failed to parse first number";
+    std::advance(parts_it, 1);
+    // Use a new subrange, skipping the first character, which is the space following the colon.
+    aoc::util::FasterScanList(std::ranges::subrange((*parts_it).begin() + 1, (*parts_it).end()), equation.second);
+    equations.emplace_back(equation.first, equation.second);
   }
 
-  // Part 2
-  u64 part2 = part1;
-  for (const auto &equation : invalid_equations) {
-    auto [valid, result] = IsValid(equation.first, equation.second.at(0), equation.second, 1, true);
-    if (valid) part2 += result;
+  // Part 1 & Part 2
+  Operand part1 = 0, part2 = 0;
+  for (const auto & [goal, operands] : equations) {
+    if (IsValid(goal, operands, operands.size() - 1, false)) {
+      part1 += goal;
+    } else {
+      if (IsValid(goal, operands, operands.size() - 1, true)) part2 += goal;
+    }
   }
+  part2 += part1;
 
   return aoc::result(part1, part2);
 }
