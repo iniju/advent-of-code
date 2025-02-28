@@ -2,12 +2,12 @@
 
 namespace {
 
-using AntennaList = std::vector<aoc::Pos>;
-using AntennaSet = absl::flat_hash_set<aoc::Pos>;
+using AntennaList = std::vector<i32>;
+using AntennaSet = absl::flat_hash_set<i32>;
 using Antennas = absl::flat_hash_map<char, AntennaList>;
 
-bool TryAddAntinode(u64 height, u64 width, const aoc::Pos& antinode, AntennaSet& antinode_set) {
-  if (aoc::util::IsOutOfMap(height, width, antinode)) {
+bool TryAddAntinode(i32 height, i32 width, i32 i, i32 j, i32 antinode, AntennaSet& antinode_set) {
+  if (i < 0 || i >= height || j  < 0 || j >= width) {
     return false;
   }
   antinode_set.insert(antinode);
@@ -22,41 +22,52 @@ namespace fmt {
 
 template<>
 auto advent<2024, 8>::solve() -> Result {
-  const u32 width = input.find_first_of('\n');
-  const u32 height = (input.size() + 1)/ width - 1;
+  const i32 width = static_cast<i32>(input.find_first_of('\n'));
+  const i32 height = static_cast<i32>((input.size() + 1)/ width - 1);
   Antennas antennas;
   auto it = input.begin();
   while (it < input.end()) {
     it = std::find_if(it, input.end(), [](char c) { return c != '.' && c != '\n'; });
     if (it == input.end()) break;
-    auto [i, j] = std::div(std::distance(input.begin(), it), width + 1);
-    antennas[*it].emplace_back(i, j);
+    antennas[*it].push_back(std::distance(input.begin(), it));
     ++it;
   }
 
   // Part 1 & Part 2
-  absl::flat_hash_set<aoc::Pos> antinodes1, antinodes2;
+  AntennaSet antinodes1, antinodes2;
   for (const auto& [_, locs] : antennas) {
-    antinodes2.insert(locs.at(locs.size() - 1));
+    antinodes2.insert(locs[locs.size() - 1]);
     for (u32 i = 0; i < locs.size() - 1; i++) {
-      const auto& a = locs.at(i);
+      const auto a = locs.at(i);
       antinodes2.insert(a);
+      auto [ai, aj] = std::div(a, width + 1);
       for (u32 j = i + 1; j < locs.size(); j++) {
-        const auto& b = locs.at(j);
+        const auto b = locs.at(j);
+        auto [bi, bj] = std::div(b, width + 1);
+        auto delta_i = bi - ai;
+        auto delta_j = bj - aj;
         auto delta = b - a;
-        auto c = locs.at(i) - delta;
-        if (TryAddAntinode(height, width, c, antinodes1)) {
+        auto c = a - delta;
+        auto ci = ai - delta_i;
+        auto cj = aj - delta_j;
+        if (TryAddAntinode(height, width, ci, cj, c, antinodes1)) {
           antinodes2.insert(c);
           do {
             c = c - delta;
-          } while (TryAddAntinode(height, width, c, antinodes2));
+            ci = ci - delta_i;
+            cj = cj - delta_j;
+          } while (TryAddAntinode(height, width, ci, cj, c, antinodes2));
         }
-        auto d = locs.at(j) + delta;
-        if (TryAddAntinode(height, width, d, antinodes1)) {
+        auto d = b + delta;
+        auto di = bi + delta_i;
+        auto dj = bj + delta_j;
+        if (TryAddAntinode(height, width, di, dj, d, antinodes1)) {
           antinodes2.insert(d);
           do {
             d = d + delta;
-          } while (TryAddAntinode(height, width, d, antinodes2));
+            di = di + delta_i;
+            dj = dj + delta_j;
+          } while (TryAddAntinode(height, width, di, dj, d, antinodes2));
         }
       }
     }
