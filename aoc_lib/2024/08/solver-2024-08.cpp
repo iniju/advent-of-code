@@ -1,7 +1,5 @@
 #include <aoc.hpp>
 
-#include <fmt/format.h>
-
 namespace {
 
 using AntennaList = std::vector<aoc::Pos>;
@@ -24,21 +22,21 @@ namespace fmt {
 
 template<>
 auto advent<2024, 8>::solve() -> Result {
-  std::vector<absl::string_view> lines = absl::StrSplit(input, "\n", absl::SkipWhitespace());
-  u32 height = lines.size();
-  u32 width = lines.at(0).size();
+  const u32 width = input.find_first_of('\n');
+  const u32 height = (input.size() + 1)/ width - 1;
   Antennas antennas;
-  for (u32 i = 0; i < height; i++) {
-    for (u32 j = 0; j < width; j++) {
-      char ch = lines.at(i).at(j);
-      if (ch == '.') continue;
-      antennas[ch].emplace_back(i, j);
-    }
+  auto it = input.begin();
+  while (it < input.end()) {
+    it = std::find_if(it, input.end(), [](char c) { return c != '.' && c != '\n'; });
+    if (it == input.end()) break;
+    auto [i, j] = std::div(std::distance(input.begin(), it), width + 1);
+    antennas[*it].emplace_back(i, j);
+    ++it;
   }
 
   // Part 1 & Part 2
   absl::flat_hash_set<aoc::Pos> antinodes1, antinodes2;
-  for (const auto& [ch, locs] : antennas) {
+  for (const auto& [_, locs] : antennas) {
     antinodes2.insert(locs.at(locs.size() - 1));
     for (u32 i = 0; i < locs.size() - 1; i++) {
       const auto& a = locs.at(i);
@@ -63,8 +61,8 @@ auto advent<2024, 8>::solve() -> Result {
       }
     }
   }
-  u64 part1 = antinodes1.size();
-  u64 part2 = antinodes2.size();
+  const u64 part1 = antinodes1.size();
+  const u64 part2 = antinodes2.size();
 
   return aoc::result(part1, part2);
 }
