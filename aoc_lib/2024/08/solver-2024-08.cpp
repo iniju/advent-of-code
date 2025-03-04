@@ -28,7 +28,7 @@ template<> auto advent<2024, 8>::solve() -> Result {
   while (it < input.end()) {
     it = std::find_if(it, input.end(), [](const char c) { return c != '.' && c != '\n'; });
     if (it == input.end()) break;
-    antennas[*it].push_back(std::distance(input.begin(), it));
+    antennas[*it].push_back(static_cast<i32>(std::distance(input.begin(), it)));
     ++it;
   }
 
