@@ -27,19 +27,6 @@
 .idea/**/gradle.xml
 .idea/**/libraries
 
-# Gradle and Maven with auto-import
-# When using Gradle or Maven with auto-import, you should exclude module files,
-# since they will be recreated, and may cause churn.  Uncomment if using
-# auto-import.
-# .idea/artifacts
-# .idea/compiler.xml
-# .idea/jarRepositories.xml
-# .idea/modules.xml
-# .idea/*.iml
-# .idea/modules
-# *.iml
-# *.ipr
-
 # CMake
 cmake-build-*/
 
@@ -77,15 +64,5 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 /build/
-/libs/abseil-cpp
-/libs/boost_1_82_0
-/libs/cpp-lazy
-/libs/eigen
-/libs/fmt
-/libs/re2
-/libs/scnlib
-/source/20*/*/input.txt
-/source/20*/*/example[1-9].txt
 /aoc_lib/20*/*/input.txt
 /aoc_lib/20*/*/example[1-9].txt
-/AoC.exe
