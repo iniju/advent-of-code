@@ -1,22 +1,20 @@
-#include <aoc.hpp>
+#include <aoc.h>
 
 namespace {
 
 using Grid = std::vector<absl::string_view>;
 
-bool FindWordXMAS(const Grid &grid, const i64 i, const i64 j, const i64 di, const i64 dj) {
-  return grid[i][j] == 'X' && grid[i + di][j + dj] == 'M' && grid[i + 2 * di][j + 2 * dj] == 'A'
-      && grid[i + 3 * di][j + 3 * dj] == 'S';
+bool FindWordXMAS(const Grid& grid, const i64 i, const i64 j, const i64 di, const i64 dj) {
+  return grid[i][j] == 'X' && grid[i + di][j + dj] == 'M' && grid[i + 2 * di][j + 2 * dj] == 'A' &&
+         grid[i + 3 * di][j + 3 * dj] == 'S';
 }
-bool FindWordMAS(const Grid &grid, const i64 mi, const i64 mj, const i64 si, const i64 sj) {
+bool FindWordMAS(const Grid& grid, const i64 mi, const i64 mj, const i64 si, const i64 sj) {
   return grid[mi][mj] == 'M' && grid[si][sj] == 'S';
 }
 
 }  // namespace
 
-namespace fmt {
-
-}  // namespace fmt
+namespace fmt {}  // namespace fmt
 
 template<>
 auto advent<2024, 04>::solve() -> Result {
@@ -44,8 +42,10 @@ auto advent<2024, 04>::solve() -> Result {
   for (i64 i = 1; i < height - 1; i++) {
     size_t j = grid[i].find_first_of('A', 1);
     while (j < grid[i].size() - 1) {
-      if ((FindWordMAS(grid, i - 1, j - 1, i + 1, j + 1) || FindWordMAS(grid, i + 1, j + 1, i - 1, j - 1)) &&
-          (FindWordMAS(grid, i - 1, j + 1, i + 1, j - 1) || FindWordMAS(grid, i + 1, j - 1, i - 1, j + 1))) {
+      if ((FindWordMAS(grid, i - 1, j - 1, i + 1, j + 1) ||
+           FindWordMAS(grid, i + 1, j + 1, i - 1, j - 1)) &&
+          (FindWordMAS(grid, i - 1, j + 1, i + 1, j - 1) ||
+           FindWordMAS(grid, i + 1, j - 1, i - 1, j + 1))) {
         part2++;
       }
       j = grid[i].find_first_of('A', j + 1);

@@ -1,7 +1,7 @@
 #ifndef AOC_TESTS_H
 #define AOC_TESTS_H
 
-#include <aoc.hpp>
+#include <aoc.h>
 #include <gtest/gtest.h>
 
 template <typename T>

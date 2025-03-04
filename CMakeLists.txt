@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_library(aoc_lib OBJECT
         aoc_lib/aoc.cpp
-        aoc_lib/aoc.hpp
+        aoc_lib/aoc.h
 #        aoc_lib/2020/01/solver-2020-01.cpp
 #        aoc_lib/2023/01/solver-2023-01.cpp
 #        aoc_lib/2023/02/solver-2023-02.cpp

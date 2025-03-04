@@ -37,7 +37,7 @@
 #include <type_traits>
 #include <vector>
 
-// convenience aliases
+// Convenience aliases
 using i8 = std::int8_t;
 using i16 = std::int16_t;
 using i32 = std::int32_t;
@@ -56,8 +56,9 @@ struct advent {
   using Result = std::tuple<std::string, std::string>;
 
   void GetInput(bool example = false, int example_index = 1) {
-    std::string path =
-        fmt::format("./aoc_lib/{}/{:02}/{}.txt", year, day, example ? fmt::format("example{}", example_index) : "input");
+    std::string path = fmt::format(
+        "./aoc_lib/{}/{:02}/{}.txt", year, day,
+        example ? fmt::format("example{}", example_index) : "input");
     std::ifstream f(path);
     CHECK(f.is_open()) << fmt::format("Could not open path {}\n", path) << std::endl;
     std::stringstream ss;
@@ -100,14 +101,14 @@ struct Pos {
     auto [i, j] = std::div(index, width + 1);
     return {i, j};
   }
-  bool operator==(const Pos &r) const { return i == r.i && j == r.j; }
-  Pos operator+(const Pos &r) const { return {i + r.i, j + r.j}; }
-  Pos operator-(const Pos &r) const { return {i - r.i, j - r.j}; }
-  Pos operator*(i64 x) const { return {i * x, j * x}; }
-  bool operator<(const Pos &r) const { return i < r.i || (i == r.i && j < r.j); }
+  bool operator==(const Pos& r) const { return i == r.i && j == r.j; }
+  Pos operator+(const Pos& r) const { return {i + r.i, j + r.j}; }
+  Pos operator-(const Pos& r) const { return {i - r.i, j - r.j}; }
+  Pos operator*(const i64 x) const { return {i * x, j * x}; }
+  bool operator<(const Pos& r) const { return i < r.i || (i == r.i && j < r.j); }
   std::string toString() const { return fmt::format("{},{}", i, j); }
   template<typename H>
-  friend H AbslHashValue(H h, const Pos &p) {
+  friend H AbslHashValue(H h, const Pos& p) {
     return H::combine(std::move(h), p.i, p.j);
   }
 };
@@ -117,7 +118,7 @@ enum class Dir : char {
   S = 'v',
   W = '<',
 };
-inline Dir ParseDir(char ch) {
+inline Dir ParseDir(const char ch) {
   switch (ch) {
     case '^': return Dir::N;
     case '>': return Dir::E;
@@ -125,40 +126,45 @@ inline Dir ParseDir(char ch) {
     case '<': return Dir::W;
     default: CHECK(false) << "Unknown Dir representation '" << ch << "'.";
   }
+  return Dir::N;
 }
-static constexpr std::array<Dir, 4> kAllDirs{Dir::N, Dir::E, Dir::S, Dir::W};
-inline Pos MoveDir(Dir dir) {
+static constexpr std::array kAllDirs{Dir::N, Dir::E, Dir::S, Dir::W};
+inline Pos MoveDir(const Dir dir) {
   static std::array<Pos, 4> kDirMoves{{{-1, 0}, {0, 1}, {1, 0}, {0, -1}}};
   switch (dir) {
     case Dir::N: return kDirMoves[0];
     case Dir::E: return kDirMoves[1];
     case Dir::S: return kDirMoves[2];
     case Dir::W: return kDirMoves[3];
+    default: return {0, 0};
   }
 }
-inline Dir OppositeDir(Dir dir) {
+inline Dir OppositeDir(const Dir dir) {
   switch (dir) {
     case Dir::N: return Dir::S;
     case Dir::E: return Dir::W;
     case Dir::S: return Dir::N;
     case Dir::W: return Dir::E;
   }
+  return Dir::N;
 }
-inline Dir TurnLeft(Dir dir) {
+inline Dir TurnLeft(const Dir dir) {
   switch (dir) {
     case Dir::N: return Dir::W;
     case Dir::E: return Dir::N;
     case Dir::S: return Dir::E;
     case Dir::W: return Dir::S;
   }
+  return Dir::N;
 }
-inline Dir TurnRight(Dir dir) {
+inline Dir TurnRight(const Dir dir) {
   switch (dir) {
     case Dir::N: return Dir::E;
     case Dir::E: return Dir::S;
     case Dir::S: return Dir::W;
     case Dir::W: return Dir::N;
   }
+  return Dir::N;
 }
 
 enum class Dir8 : char {
@@ -171,10 +177,11 @@ enum class Dir8 : char {
   W = '<',
   NW = 'F',
 };
-static constexpr std::array<Dir8, 8>
-    kAllDir8s{Dir8::N, Dir8::NE, Dir8::E, Dir8::SE, Dir8::S, Dir8::SW, Dir8::W, Dir8::NW};
-inline Pos MoveDir8(Dir8 dir) {
-  static std::array<Pos, 8> kDir8Moves{{{-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}}};
+static constexpr std::array kAllDir8s{Dir8::N, Dir8::NE, Dir8::E, Dir8::SE,
+                                      Dir8::S, Dir8::SW, Dir8::W, Dir8::NW};
+inline Pos MoveDir8(const Dir8 dir) {
+  static std::array<Pos, 8> kDir8Moves{
+      {{-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}}};
   switch (dir) {
     case Dir8::N: return kDir8Moves[0];
     case Dir8::NE: return kDir8Moves[1];
@@ -185,6 +192,7 @@ inline Pos MoveDir8(Dir8 dir) {
     case Dir8::W: return kDir8Moves[6];
     case Dir8::NW: return kDir8Moves[7];
   }
+  return {0, 0};
 }
 template<typename T1, typename T2>
 auto result(T1 t1, T2 t2) -> std::tuple<std::string, std::string> {
@@ -192,11 +200,11 @@ auto result(T1 t1, T2 t2) -> std::tuple<std::string, std::string> {
 }
 
 template<typename E>
-auto ToUnderlying(E e) { return static_cast<std::underlying_type_t<E>>(e); }
-
-inline i32 signum(i32 val) {
-  return (0 < val) - (val < 0);
+auto ToUnderlying(E e) {
+  return static_cast<std::underlying_type_t<E>>(e);
 }
+
+inline i32 signum(const i32 val) { return (0 < val) - (val < 0); }
 
 static constexpr std::array<u64, 20> kTenPowers{
     1u,
@@ -222,15 +230,16 @@ static constexpr std::array<u64, 20> kTenPowers{
 
 namespace util {
 
-inline bool IsInMap(u64 height, u64 width, const Pos &pos) {
+inline bool IsInMap(const u64 height, const u64 width, const Pos& pos) {
   return pos.i >= 0 && pos.i < height && pos.j >= 0 && pos.j < width;
 }
-inline bool IsOutOfMap(u64 height, u64 width, const aoc::Pos &pos) {
+inline bool IsOutOfMap(const u64 height, const u64 width, const Pos& pos) {
   return pos.i < 0 || pos.i >= height || pos.j < 0 || pos.j >= width;
 }
 
 template<typename T>
-void ScanList(absl::string_view input, std::vector<T> &list, absl::string_view separator = " ") {
+void ScanList(
+    const absl::string_view input, std::vector<T>& list, const absl::string_view separator = " ") {
   absl::c_transform(absl::StrSplit(input, separator), std::back_inserter(list), [](auto token) {
     auto result = scn::scan<T>(token, "{}");
     CHECK(result) << "Can't parse token '" << token << "'.";
@@ -238,7 +247,20 @@ void ScanList(absl::string_view input, std::vector<T> &list, absl::string_view s
   });
 }
 template<typename T>
-void FasterScanList(std::ranges::subrange<std::string::iterator> input, std::vector<T> &list, const u32 skip = 1) {
+void FastScanList(
+    std::ranges::subrange<std::string::iterator> input, std::vector<T>& list,
+    std::string_view delimiter = " ") {
+  for (auto subrange : input | std::views::split(delimiter)) {
+    T x;
+    auto result = fast_float::from_chars(
+        std::ranges::data(subrange), std::ranges::data(subrange) + std::ranges::size(subrange), x);
+    CHECK(result.ec == std::errc()) << "Couldn't parse '" << std::ranges::data(subrange) << "'.";
+    list.push_back(x);
+  }
+}
+template<typename T>
+void FasterScanList(
+    std::ranges::subrange<std::string::iterator> input, std::vector<T>& list, const u32 skip = 1) {
   auto ptr = std::ranges::data(input);
   auto line_end = ptr + std::ranges::size(input);
   T x;
@@ -249,21 +271,11 @@ void FasterScanList(std::ranges::subrange<std::string::iterator> input, std::vec
     ptr = const_cast<char*>(result.ptr) + skip;
   }
 }
-template<typename T>
-void FastScanList(std::ranges::subrange<std::string::iterator> input, std::vector<T> &list, std::string_view delimiter = " ") {
-  for (auto subrange : input | std::views::split(delimiter)) {
-    T x;
-    auto result = fast_float::from_chars(
-        std::ranges::data(subrange), std::ranges::data(subrange) + std::ranges::size(subrange), x);
-    CHECK(result.ec == std::errc()) << "Couldn't parse '" << std::ranges::data(subrange) << "'.";
-    list.push_back(x);
-  }
-}
 
 template<typename T>
-std::vector<T> TokenizeInput(absl::string_view input,
-                             std::function<T(absl::string_view)> transform,
-                             absl::string_view separator = "\n") {
+std::vector<T> TokenizeInput(
+    const absl::string_view input, std::function<T(absl::string_view)> transform,
+    const absl::string_view separator = "\n") {
   std::vector<absl::string_view> tokens = absl::StrSplit(input, separator, absl::SkipWhitespace());
   std::vector<T> result;
   result.reserve(tokens.size());
@@ -301,14 +313,14 @@ std::vector<UType> PrimeSieve(UType limit) {
 }
 
 template<typename UType>
-absl::flat_hash_map<UType, u64> Factorize(UType x, const std::vector<UType> &primes) {
+absl::flat_hash_map<UType, u64> Factorize(UType x, const std::vector<UType>& primes) {
   absl::flat_hash_map<UType, u64> result{};
   UType rem{x};
   int pi = 0;
   while (rem != 1 && pi < primes.size()) {
     UType prime = primes[pi];
     while (rem % prime == 0) {
-      result[prime]++;
+      ++result[prime];
       rem /= prime;
     }
     pi++;
@@ -320,8 +332,8 @@ absl::flat_hash_map<UType, u64> Factorize(UType x, const std::vector<UType> &pri
 template<typename UType>
 UType LCM(absl::flat_hash_set<UType> values) {
   UType lcm = 1;
-  u64 max_value = *absl::c_max_element(values);
-  std::vector<UType> primes = aoc::util::PrimeSieve(max_value + 1);
+  const u64 max_value = *absl::c_max_element(values);
+  std::vector<UType> primes = PrimeSieve(max_value + 1);
   absl::flat_hash_map<UType, u64> common_factors{};
   for (UType value : values) {
     auto factors = Factorize(value, primes);
@@ -351,7 +363,7 @@ struct EigenMatrixHashWrapper {
 };
 
 template<typename H>
-H AbslHashValue(H h, const EigenMatrixHashWrapper &m) {
+H AbslHashValue(H h, const EigenMatrixHashWrapper& m) {
   H state = H::combine(std::move(h), m.m.rows(), m.m.cols());
   for (i32 i = 0; i < m.m.rows(); i++) {
     for (i32 j = 0; j < m.m.cols(); j++) {
@@ -365,7 +377,6 @@ using EigenMatrixHasher = absl::Hash<EigenMatrixHashWrapper>;
 }  // namespace util
 
 }  // namespace aoc
-
 
 //namespace std {
 //
@@ -388,20 +399,20 @@ namespace fmt {
 
 template<>
 struct formatter<aoc::Dir> : formatter<char> {
-  auto format(aoc::Dir dir, format_context &ctx) const {
+  auto format(const aoc::Dir dir, format_context& ctx) const {
     return formatter<char>::format(aoc::ToUnderlying(dir), ctx);
   }
 };
 template<>
 struct formatter<aoc::Dir8> : formatter<char> {
-  auto format(aoc::Dir8 dir, format_context &ctx) const {
+  auto format(const aoc::Dir8 dir, format_context& ctx) const {
     return formatter<char>::format(aoc::ToUnderlying(dir), ctx);
   }
 };
 
 template<>
 struct formatter<aoc::Pos> : formatter<string_view> {
-  inline auto format(const aoc::Pos &p, format_context &ctx) const {
+  auto format(const aoc::Pos& p, format_context& ctx) const {
     return formatter<string_view>::format(fmt::format("[{}, {}]", p.i, p.j), ctx);
   }
 };

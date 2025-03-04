@@ -1,4 +1,4 @@
-#include <aoc.hpp>
+#include <aoc.h>
 
 #include <re2/re2.h>
 
@@ -6,7 +6,7 @@ namespace {
 
 RE2 InstructionPattern(R"(((?:mul\([\d,]+\)|do\(\)|don't\(\))))");
 
-void ParseInstructions(absl::string_view input, i64& part1, i64 & part2) {
+void ParseInstructions(absl::string_view input, i64& part1, i64& part2) {
   absl::string_view instruction;
   bool skip = false;
   while (RE2::FindAndConsume(&input, InstructionPattern, &instruction)) {
@@ -29,9 +29,7 @@ void ParseInstructions(absl::string_view input, i64& part1, i64 & part2) {
 
 }  // namespace
 
-namespace fmt {
-
-}  // namespace fmt
+namespace fmt {}  // namespace fmt
 
 template<>
 auto advent<2024, 03>::solve() -> Result {

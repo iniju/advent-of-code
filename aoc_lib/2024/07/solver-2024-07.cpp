@@ -1,4 +1,4 @@
-#include <aoc.hpp>
+#include <aoc.h>
 
 namespace {
 
@@ -7,7 +7,8 @@ using Operands = std::vector<Operand>;
 using Equation = std::pair<Operand, Operands>;
 using Equations = std::vector<Equation>;
 
-bool IsValid(const Operand goal, const Operands &operands, const u16 operand_i, const bool use_concat) {
+bool IsValid(
+    const Operand goal, const Operands& operands, const u16 operand_i, const bool use_concat) {
   const auto operand = operands[operand_i];
   if (operand_i == 0) return goal == operand;
 
@@ -15,7 +16,8 @@ bool IsValid(const Operand goal, const Operands &operands, const u16 operand_i, 
   if (r == 0 && IsValid(q, operands, operand_i - 1, use_concat)) return true;
   if (use_concat) {
     const auto tens = aoc::kTenPowers[aoc::util::NumDigits(operand)];
-    if ((goal - operand) % tens == 0 && IsValid(goal / tens, operands, operand_i - 1, use_concat)) return true;
+    if ((goal - operand) % tens == 0 && IsValid(goal / tens, operands, operand_i - 1, use_concat))
+      return true;
   }
   if (IsValid(goal - operand, operands, operand_i - 1, use_concat)) return true;
   return false;
@@ -23,9 +25,7 @@ bool IsValid(const Operand goal, const Operands &operands, const u16 operand_i, 
 
 }  // namespace
 
-namespace fmt {
-
-}  // namespace fmt
+namespace fmt {}  // namespace fmt
 
 template<>
 auto advent<2024, 7>::solve() -> Result {
@@ -39,13 +39,14 @@ auto advent<2024, 7>::solve() -> Result {
     CHECK(ec == std::errc()) << "Failed to parse first number";
     std::advance(parts_it, 1);
     // Use a new subrange, skipping the first character, which is the space following the colon.
-    aoc::util::FasterScanList(std::ranges::subrange((*parts_it).begin() + 1, (*parts_it).end()), equation.second);
+    aoc::util::FasterScanList(
+        std::ranges::subrange((*parts_it).begin() + 1, (*parts_it).end()), equation.second);
     equations.emplace_back(equation.first, equation.second);
   }
 
   // Part 1 & Part 2
   Operand part1 = 0, part2 = 0;
-  for (const auto & [goal, operands] : equations) {
+  for (const auto& [goal, operands] : equations) {
     if (IsValid(goal, operands, operands.size() - 1, false)) {
       part1 += goal;
     } else {

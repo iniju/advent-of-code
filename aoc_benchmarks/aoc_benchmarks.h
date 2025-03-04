@@ -1,8 +1,8 @@
 #ifndef AOC_BENCHMARKS_H
 #define AOC_BENCHMARKS_H
 
+#include <aoc.h>
 #include <benchmark/benchmark.h>
-#include <aoc.hpp>
 
 template <int YEAR, int DAY>
 void AocBenchmarks(benchmark::State& state) {

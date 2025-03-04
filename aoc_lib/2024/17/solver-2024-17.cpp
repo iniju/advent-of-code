@@ -1,4 +1,4 @@
-#include <aoc.hpp>
+#include <aoc.h>
 
 #include <fmt/format.h>
 #include <re2/re2.h>

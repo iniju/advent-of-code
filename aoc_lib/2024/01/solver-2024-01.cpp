@@ -1,12 +1,8 @@
-#include <aoc.hpp>
+#include <aoc.h>
 
-namespace {
+namespace {}  // namespace
 
-}  // namespace
-
-namespace fmt {
-
-}  // namespace fmt
+namespace fmt {}  // namespace fmt
 
 template<>
 auto advent<2024, 1>::solve() -> Result {

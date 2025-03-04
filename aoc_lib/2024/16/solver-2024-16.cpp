@@ -1,4 +1,4 @@
-#include <aoc.hpp>
+#include <aoc.h>
 
 #include <absl/container/btree_map.h>
 #include <fmt/format.h>

@@ -1,11 +1,10 @@
-#include <aoc.hpp>
+#include <aoc.h>
 
 namespace {
 
 using Rules = absl::flat_hash_map<u32, absl::flat_hash_set<u32>>;
 using Pages = std::vector<u32>;
 using PageSets = std::vector<Pages>;
-
 
 u32 FixPages(const Pages& pages, const Rules& rules) {
   const auto goal = pages.size() / 2;
@@ -27,9 +26,7 @@ u32 FixPages(const Pages& pages, const Rules& rules) {
 
 }  // namespace
 
-namespace fmt {
-
-}  // namespace fmt
+namespace fmt {}  // namespace fmt
 
 template<>
 auto advent<2024, 5>::solve() -> Result {
