@@ -1,45 +1,41 @@
 #ifndef ADVENTOFCODE_AOC_HPP
 #define ADVENTOFCODE_AOC_HPP
 
-#include <algorithm>
-#include <array>
-#include <charconv>
-#include <cmath>
-#include <cstdint>
-#include <chrono>
-#include <deque>
-#include <fstream>
-#include <functional>
-#include <iostream>
-#include <iterator>
-#include <numeric>
-#include <ostream>
-#include <queue>
-#include <ranges>
-#include <sstream>
-#include <stack>
-#include <string>
-#include <tuple>
-#include <type_traits>
-#include <vector>
-
 #include <absl/algorithm/container.h>
 #include <absl/container/flat_hash_map.h>
 #include <absl/container/flat_hash_set.h>
-#include <absl/log/check.h>
 #include <absl/hash/hash.h>
+#include <absl/log/check.h>
 #include <absl/strings/str_split.h>
 #include <absl/strings/substitute.h>
 
-#include <Eigen/Core>
-
 #include <fast_float/fast_float.h>
+
+#include <Eigen/Core>
 
 #include <fmt/color.h>
 #include <fmt/core.h>
 #include <fmt/ranges.h>
 
 #include <scn/scan.h>
+
+#include <algorithm>
+#include <array>
+#include <charconv>
+#include <chrono>
+#include <cmath>
+#include <cstdint>
+#include <fstream>
+#include <functional>
+#include <iterator>
+#include <ostream>
+#include <queue>
+#include <ranges>
+#include <sstream>
+#include <string>
+#include <tuple>
+#include <type_traits>
+#include <vector>
 
 // convenience aliases
 using i8 = std::int8_t;
@@ -100,20 +96,24 @@ namespace aoc {
 struct Pos {
   i64 i;
   i64 j;
-  inline Pos() : i(0), j(0) {}
-  inline Pos(i64 _i, i64 _j) : i(_i), j(_j) {}
-  inline Pos(const Pos &o) = default;
-  inline Pos(absl::string_view str) {
+  Pos() : i(0), j(0) {}
+  Pos(const i64 _i, const i64 _j) : i(_i), j(_j) {}
+  Pos(const Pos& o) = default;
+  explicit Pos(absl::string_view str) {
     auto result = scn::scan<i64, i64>(str, "{},{}");
     CHECK(result) << "can't parse '" << str << "'.";
     std::tie(i, j) = result->values();
   }
-  inline bool operator==(const Pos &r) const { return i == r.i && j == r.j; }
-  inline Pos operator+(const Pos &r) const { return {i + r.i, j + r.j}; }
-  inline Pos operator-(const Pos &r) const { return {i - r.i, j - r.j}; }
-  inline Pos operator*(i64 x) const { return {i * x, j * x}; }
-  inline bool operator<(const Pos &r) const { return i < r.i || (i == r.i && j < r.j); }
-  inline std::string toString() const { return fmt::format("{},{}", i, j); }
+  static Pos FromLinearMap(const i64 index, const i64 width) {
+    auto [i, j] = std::div(index, width + 1);
+    return {i, j};
+  }
+  bool operator==(const Pos &r) const { return i == r.i && j == r.j; }
+  Pos operator+(const Pos &r) const { return {i + r.i, j + r.j}; }
+  Pos operator-(const Pos &r) const { return {i - r.i, j - r.j}; }
+  Pos operator*(i64 x) const { return {i * x, j * x}; }
+  bool operator<(const Pos &r) const { return i < r.i || (i == r.i && j < r.j); }
+  std::string toString() const { return fmt::format("{},{}", i, j); }
   template<typename H>
   friend H AbslHashValue(H h, const Pos &p) {
     return H::combine(std::move(h), p.i, p.j);
@@ -370,7 +370,7 @@ H AbslHashValue(H h, const EigenMatrixHashWrapper &m) {
 }
 using EigenMatrixHasher = absl::Hash<EigenMatrixHashWrapper>;
 
-}  // util
+}  // namespace util
 
 }  // namespace aoc
 
@@ -416,4 +416,4 @@ struct formatter<aoc::Pos> : formatter<string_view> {
 
 }  // namespace fmt
 
-#endif // ADVENTOFCODE_AOC_HPP
+#endif  // ADVENTOFCODE_AOC_HPP
