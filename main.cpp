@@ -2,7 +2,6 @@
 
 auto main() -> int {
   constexpr int YEAR{2024};
-  auto start = std::chrono::high_resolution_clock::now();
 
   advent<YEAR, 1>().print();
   advent<YEAR, 2>().print();
@@ -30,8 +29,5 @@ auto main() -> int {
   advent<YEAR, 24>().print();
   advent<YEAR, 25>().print();
 
-  auto end = std::chrono::high_resolution_clock::now();
-  auto duration_nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-  fmt::print("Year {} total: {:0.5f} ms\n", YEAR, (long double) duration_nanos / 1.0e6l);
   return 0;
 }

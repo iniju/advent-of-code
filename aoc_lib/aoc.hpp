@@ -69,16 +69,8 @@ struct advent {
 
   void print() {
     GetInput();
-    auto start = std::chrono::high_resolution_clock::now();
     const auto [part1, part2] = solve();
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration_nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-    fmt::print("{}/{:02d} -> Part 1: {:20}\tPart 2: {:20}\t\t{:>10.5f} ms\n",
-               year,
-               day,
-               part1,
-               part2,
-               (long double) duration_nanos / 1.0e6l);
+    fmt::print("{}/{:02d} -> Part 1: {:20}\tPart 2: {:20}\n", year, day, part1, part2);
   }
 
   auto solve() -> Result;
@@ -101,7 +93,7 @@ struct Pos {
   Pos(const Pos& o) = default;
   explicit Pos(absl::string_view str) {
     auto result = scn::scan<i64, i64>(str, "{},{}");
-    CHECK(result) << "can't parse '" << str << "'.";
+    CHECK(result) << "Can't parse '" << str << "'.";
     std::tie(i, j) = result->values();
   }
   static Pos FromLinearMap(const i64 index, const i64 width) {
