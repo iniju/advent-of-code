@@ -12,7 +12,7 @@ FetchContent_MakeAvailable(googlebenchmark)
 add_executable(
         aoc_benchmarks
         aoc_benchmarks.h
-        aoc_2024_benchmarks.cc
+        aoc_2025_benchmarks.cc
 )
 target_link_libraries(
         aoc_benchmarks

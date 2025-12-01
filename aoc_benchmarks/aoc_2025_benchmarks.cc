@@ -1,0 +1,3 @@
+#include "aoc_benchmarks.h"
+
+AOC_BENCHMARK(2025, 1);

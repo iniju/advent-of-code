@@ -15,7 +15,7 @@ enable_testing()
 add_executable(
         aoc_tests
         aoc_tests.h
-        aoc_2024_tests.cc
+        aoc_2025_tests.cc
 )
 target_link_libraries(
         aoc_tests
