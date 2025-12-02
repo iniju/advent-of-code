@@ -34,6 +34,7 @@ add_library(aoc_lib OBJECT
 #        aoc_lib/2023/23/solver-2023-23.cpp
 #        aoc_lib/2023/24/solver-2023-24.cpp
 #        aoc_lib/2023/25/solver-2023-25.cpp
+
         aoc_lib/2024/01/solver-2024-01.cpp
 #        aoc_lib/2024/02/solver-2024-02.cpp
 #        aoc_lib/2024/03/solver-2024-03.cpp
@@ -59,7 +60,9 @@ add_library(aoc_lib OBJECT
 #        aoc_lib/2024/23/solver-2024-23.cpp
 #        aoc_lib/2024/24/solver-2024-24.cpp
 #        aoc_lib/2024/25/solver-2024-25.cpp
+
         aoc_lib/2025/01/solver-2025-01.cpp
+        aoc_lib/2025/02/solver-2025-02.cpp
 )
 
 target_include_directories(aoc_lib PUBLIC
