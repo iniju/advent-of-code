@@ -63,6 +63,7 @@ add_library(aoc_lib OBJECT
 
         aoc_lib/2025/01/solver-2025-01.cpp
         aoc_lib/2025/02/solver-2025-02.cpp
+        aoc_lib/2025/03/solver-2025-03.cpp
 )
 
 target_include_directories(aoc_lib PUBLIC
