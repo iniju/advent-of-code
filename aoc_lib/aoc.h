@@ -15,6 +15,7 @@
 
 #include <fmt/color.h>
 #include <fmt/core.h>
+#include <fmt/ostream.h>
 #include <fmt/ranges.h>
 
 #include <scn/scan.h>
@@ -416,6 +417,10 @@ struct formatter<aoc::Pos> : formatter<string_view> {
     return formatter<string_view>::format(fmt::format("[{}, {}]", p.i, p.j), ctx);
   }
 };
+
+template<typename T>
+struct formatter<T, std::enable_if_t<std::is_base_of_v<Eigen::DenseBase<T>, T>, char>>
+    : ostream_formatter {};
 
 }  // namespace fmt
 
