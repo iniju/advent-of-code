@@ -65,8 +65,8 @@ struct advent {
     std::stringstream ss;
     ss << f.rdbuf();
     std::string result = ss.str();
-    result = absl::StripTrailingAsciiWhitespace(result);
-    input = result;
+    auto it = std::find_if(result.rbegin(), result.rend(), absl::ascii_isprint);
+    input = result.substr(0, static_cast<size_t>(result.rend() - it));
   }
 
   void print() {
@@ -251,7 +251,9 @@ template<typename T>
 void FastScanList(
     std::ranges::subrange<std::string::iterator> input, std::vector<T>& list,
     std::string_view delimiter = " ") {
-  for (auto subrange : input | std::views::split(delimiter)) {
+  for (auto subrange :
+       input | std::views::split(delimiter) |
+           std::views::filter([](const auto& subrange) { return !subrange.empty(); })) {
     T x;
     auto result = fast_float::from_chars(
         std::ranges::data(subrange), std::ranges::data(subrange) + std::ranges::size(subrange), x);
