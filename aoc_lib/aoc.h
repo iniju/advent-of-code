@@ -423,6 +423,9 @@ struct formatter<aoc::Pos> : formatter<string_view> {
 template<typename T>
 struct formatter<T, std::enable_if_t<std::is_base_of_v<Eigen::DenseBase<T>, T>, char>>
     : ostream_formatter {};
+//template<typename T>
+//struct formatter<T, std::enable_if_t<std::is_base_of_v<Eigen::ArrayBase<T>, T>, char>>
+//    : ostream_formatter {};
 
 }  // namespace fmt
 

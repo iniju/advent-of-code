@@ -9,7 +9,8 @@ auto main() -> int {
 //  advent<YEAR, 4>().print();
 //  advent<YEAR, 5>().print();
 //  advent<YEAR, 6>().print();
-  advent<YEAR, 7>().print();
+//  advent<YEAR, 7>().print();
+  advent<YEAR, 8>().print();
 
   return 0;
 }
