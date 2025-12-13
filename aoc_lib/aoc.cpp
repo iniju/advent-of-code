@@ -97,5 +97,36 @@ u32 NumDigits(u32 x) {
   return 1;
 }
 
+template<typename T>
+u32 NumBits(T x) {
+  u32 bits = 0;
+  while (x) {
+    if (x & 1) bits++;
+    x >>= 1;
+  }
+  return bits;
+}
+// partial specialization optimization for 64-bit numbers
+template<>
+u32 NumBits(u64 x) {
+  u64 count = x - ((x >> 1) & 0x5555555555555555);
+  count = ((count >> 2) & 0x3333333333333333) + (count & 0x3333333333333333);
+  count = ((count >> 4) + count) & 0x0F0F0F0F0F0F0F0F;
+  count = ((count >> 8) + count) & 0x00FF00FF00FF00FF;
+  count = ((count >> 16) + count) & 0x0000FFFF0000FFFF;
+  count = ((count >> 32) + count) & 0x00000000FFFFFFFF;
+  return count;
+}
+// partial specialization optimization for 32-bit numbers
+template<>
+u32 NumBits(u32 x) {
+  u32 count = x - ((x >> 1) & 0x55555555);
+  count = ((count >> 2) & 0x33333333) + (count & 0x33333333);
+  count = ((count >> 4) + count) & 0x0F0F0F0F;
+  count = ((count >> 8) + count) & 0x00FF00FF;
+  count = ((count >> 16) + count) & 0x0000FFFF;
+  return count;
+}
+
 } // namespace aoc::util
 

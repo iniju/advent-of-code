@@ -361,6 +361,15 @@ u32 NumDigits(u64 x);
 template<>
 u32 NumDigits(u32 x);
 
+template<typename T>
+u32 NumBits(T x);
+// partial specialization optimization for 64-bit numbers
+template<>
+u32 NumBits(u64 x);
+// partial specialization optimization for 32-bit numbers
+template<>
+u32 NumBits(u32 x);
+
 struct EigenMatrixHashWrapper {
   Eigen::MatrixXi m;
 };
