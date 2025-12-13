@@ -13,6 +13,8 @@ using test_2025_types = ::testing::Types<
     TEST_YEAR_DAY(2025, 9)
     TEST_YEAR_DAY(2025, 9),
     TEST_YEAR_DAY(2025, 10)
+    TEST_YEAR_DAY(2025, 10),
+    TEST_YEAR_DAY(2025, 11)
 >;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(My, AoCTests, test_2025_types);
